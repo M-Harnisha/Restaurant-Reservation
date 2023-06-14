@@ -1,0 +1,23 @@
+<h1>Enter your ratings..</h1>
+<div class="rating bg-light text-dark">
+
+    <%= form_tag(reservation_rating_create_url(restaurant_id:@restaurant,id:@reservation), method: "post") do |form|%>
+        
+        <div class="mb-3 d-flex justify-content-around">
+            <%= label_tag(@restaurant.id, @restaurant.name) %>
+            <%= range_field_tag @restaurant.id,  in: 1...5 , class:"form-control"  %>
+        </div>
+
+        <% @reservation.order.order_items.each do |item| %>
+            <div class="mb-3 d-flex justify-content-around">
+                <%= label_tag(item.menu_id, item.name) %>
+                <%= range_field_tag item.menu_id, in: 1...5 , class:"form-control" %>
+            </div>
+        <% end %>
+
+        <div class="mb-3">
+            <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm w-100" %>
+        </div>
+    <% end %>
+
+</div>

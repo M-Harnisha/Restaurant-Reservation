@@ -1,0 +1,13 @@
+<h1>Menu items available </h1>
+
+<%= form_tag(reservation_food_confrim_path(id:@restaurant), method: "post") do %>
+    <% @menus.each do |menu| %>
+            <%= radio_button_tag(:food_order, menu.id) %>
+            <%= label_tag(:food_order, menu.name) %>
+    <% end %>
+ 
+
+    <%= submit_tag("submit") %>
+  
+  <% end %>
+

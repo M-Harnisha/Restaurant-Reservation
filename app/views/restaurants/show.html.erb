@@ -1,0 +1,101 @@
+<div class="container">
+  <div class="row">
+    <div class="col image">
+      <%= image_tag(@restaurant.images, style: "object-fit: contain; width: 100%; height: 100%") %>
+    </div>
+    <div class="col restaurant_details">
+
+      <h1><%= @restaurant.name.upcase %></h1>
+      <p><%= @restaurant.address %></p>
+      
+      <p><%= @restaurant.city %></p>
+      <p>ph.no:<%= @restaurant.contact %></p> 
+      
+      
+      <%= link_to "Edit" , edit_restaurant_url , class:"btn btn-primary btn-sm mr-5"%>
+      <%= link_to "Destroy", restaurant_path(@restaurant), data: {
+                          turbo_method: :delete,
+                          turbo_confirm: "Are you sure?"
+                        } , class:"btn btn-danger btn-sm" %>
+      <br>
+    </div>
+  </div>
+</div>
+
+
+<h1>__Tables__</h1>
+<div class="row row-cols-1 row-cols-md-4 table_details">
+<% @restaurant.tables.each do |table| %>
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+          <p>Table name: <%= table.name %></p>
+          <p>Members occupy table:<%= table.member %></p>
+
+            <%= link_to "Edit",  edit_restaurant_table_path(table)  , class:" btn btn-primary btn-sm mr-10" %>
+            <%= link_to "Destroy", restaurant_table_path(table), data: {
+                              turbo_method: :delete,
+                              turbo_confirm: "Are you sure?"
+                            } , class:"btn btn-danger btn-sm"%>
+      </div>
+    </div>
+  </div>
+<% end %>
+</div>
+
+
+<div>
+  <h2>Add new table </h2>
+  <%= render "/tables/form" , restaurant: @restaurant %>
+</div>
+
+
+<h1>__Menu Items__</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <% @restaurant.menu_items.each do |menu| %>
+  <div class="col">
+    <div class="card" style="width: 20rem; height:25rem">
+      <%= image_tag(menu.images, style: "width: 100%; height: 80%",class:"card-img-top") %>
+      <div class="card-body">
+        <p>Name:&nbsp;&nbsp;<%= menu.name %></p>
+        <p>Quantity:&nbsp;&nbsp;<%= menu.quantity %></p>
+        <p>Rate:&nbsp;&nbsp;<%= menu.rate %></p>
+        <%= link_to "Edit",  edit_restaurant_menu_item_path(menu),class:"btn btn-primary btn-sm" %>
+        <%= link_to "Destroy", restaurant_menu_item_path(menu), data: {
+                          turbo_method: :delete,
+                          turbo_confirm: "Are you sure?"
+                        } ,class:"btn btn-danger btn-sm" %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
+
+<div>
+  <h2>Add new menu </h2>
+  <%= render "/menu_items/form" , restaurant: @restaurant %>
+</div>
+
+<h1>__choose options for reserving table and ordering food__</h1>
+
+<%= form_tag(reservation_index_path(id: @restaurant) , method: "post" , class:"d-flex flex-column align-items-center") do %>
+
+  <div class="form-check">
+    <%= radio_button_tag(:reservation, "Table",class:"form-check-input") %>
+    <%= label_tag(:reservation_table, "Table only",class:"form-check-label" ) %>
+  </div>
+
+  <div class="form-check">
+    <%= radio_button_tag(:reservation, "Food",class:"form-check-input") %>
+    <%= label_tag(:reservation_food, "Food only",class:"form-check-label") %>
+  </div>
+
+  <div class="form-check">
+    <%= radio_button_tag(:reservation, "Table with food",class:"form-check-input") %>
+    <%= label_tag(:reservation_both, "Table with food",class:"form-check-label") %>
+  </div>
+  
+  <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm" %>
+
+<% end %>
+

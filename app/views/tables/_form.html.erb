@@ -1,0 +1,19 @@
+<%= stylesheet_link_tag 'table' %>
+
+<%= form_with model: [restaurant , restaurant.tables.build], class:"table_form bg-light text-dark" do |form| %>
+
+    <div class="mb-3">
+      <%= form.label :name , class:"form-label" %><br>
+      <%= form.text_field :name , class:"form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :member , class:"form-label"%><br>
+      <%= form.text_field :member , class:"form-control"%>
+    </div>
+
+    <div class="mb-3">
+      <%= form.submit  "submit" , class:"btn btn-success my-3 btn-sm"%>
+    </div>
+    
+<% end %>

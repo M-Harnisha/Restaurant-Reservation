@@ -1,0 +1,51 @@
+
+h1{
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    padding: 2%;
+    margin-bottom: 3%;
+}
+
+.card-text{
+    font-family: 'Barlow', sans-serif;
+    font-weight : 600;
+}
+
+.card-text p {
+    margin-bottom: 0.6% !important;
+}
+
+.restaurant_form{
+    width: 50%;
+    margin-left: 25% !important;
+    padding: 5%;
+    border-radius: 5%;
+}
+
+.card .btn{
+    margin-top: 3%;
+}
+
+.row{
+    --bs-gutter-x: 0rem;
+}
+
+.row .image{
+    margin: 5%;
+}
+
+.row .restaurant_details{
+    justify-content: center;
+}
+
+.row .restaurant_details h1{
+    margin-top: 10%;
+    text-align: left;
+    font-size:30px;
+    padding-left: 0%;
+}
+
+h2{
+    font-family: 'Lato', sans-serif;
+    margin:3% 0px!important;
+}

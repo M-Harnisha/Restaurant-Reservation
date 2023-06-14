@@ -1,0 +1,25 @@
+<h1>Order Food Items </h1>
+<div class="book_table bg-light text-dark">
+
+<%= form_tag(reservation_food_confrim_path(id:@restaurant,reservation_id:@reservation), method: "post") do |f|%>
+    <div class="row row-cols-2 g-10">
+    
+        <% @menus.each do |menu| %>
+
+            <div class="col">
+                <p><%= check_box_tag menu.id %>
+                <%= label_tag(menu.id, menu.name) %></p>
+                <p>Rate : Rs.<%= menu.rate %> </p>
+                
+                <p>Quantity Available : <%= menu.quantity %> </p>
+                <%= label_tag("Quantity", "Enter quantity") %>
+                <%= text_field_tag(:quantity,menu.id) %>
+            </div>
+        <% end %>
+    </div>
+    <hr>
+    <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm w-100" %>
+
+  <% end %>
+
+  </div>

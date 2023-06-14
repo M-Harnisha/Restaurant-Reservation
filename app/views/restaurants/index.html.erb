@@ -1,0 +1,23 @@
+<%= stylesheet_link_tag 'restaurant' %>
+<h1>My Restaurants...</h1>
+
+<div class="row row-cols-1 row-cols-md-3 g-4" >
+    <% @restaurants.each do |restaurant| %>
+        <div class="col" >
+            <div class="card h-100" style="width: 19rem;">
+                <%= image_tag(restaurant.images, style: "object-fit: contain; width: 100%; height: 100%" , class:"card-img-top") %>
+                <div class="card-body">
+                    <div class="card-text">
+                        <p><%= restaurant.name.upcase %></p>
+                        <p><%= restaurant.address %></p>
+                        <p><%= restaurant.city %></p>
+                        <p>ph.no:<%= restaurant.contact %></p>
+                        <%= link_to "show more" , restaurant ,class:"btn btn-dark"%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% end %>
+</div>
+
+

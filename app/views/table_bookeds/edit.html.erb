@@ -1,0 +1,32 @@
+<h1>Edit Reservation </h1>
+
+
+<% if flash[:notice] %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <%= flash[:notice] %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+<% end %>
+
+
+<div class="book_table bg-light text-dark">
+
+        <%= form_tag(reservation_table_confrim_path(id:@restaurant,reservation_id:@reservation), method: "post") do |f|%>
+                <div class="row row-cols-2">
+                        <%if @tables && @tables.each do |table| %>
+                                <div class="col">
+                                <%= radio_button_tag(:table_book, table.id) %>
+                                <%= label_tag(:reservation_table, table.name) %>
+                                <p>Members occupy table : <%= table.member %></p>
+                                </div>
+                        <% end %>
+                        <% end %>
+                </div>
+                <hr>
+                <%= label_tag(:date, Date,class:"form-label") %>
+                <%= date_field(:date_id, :date,class:"form-control") %>
+                <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm w-100" %>
+                
+        <% end %>
+</div>
+
