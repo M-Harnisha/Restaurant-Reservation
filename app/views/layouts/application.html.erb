@@ -29,15 +29,28 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <%= link_to "Home" , root_path , class:"nav-link active" %>
-            <%= link_to "Add new restaurant" ,  new_restaurant_url , class:"nav-link" %>
+            <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+              <%= link_to "Add new restaurant" ,  new_restaurant_url , class:"nav-link" %>
+            <% end %>
             <%= link_to "Show my reservations" , reservation_show_url , class:"nav-link" %>
-            <%= link_to "login" , root_path , class:"nav-link" %>
-            
+            <% if account_signed_in? %>
+            <%= button_to "Edit" ,   edit_account_registration_path  , method: :get, class:"nav-link bg-dark",style:"border:none;" %>
+
+              <%= button_to "Sign out" ,  destroy_account_session_path , method: :delete, class:"nav-link bg-dark",style:"border:none;" %>
+            <% else %>
+              <%= link_to "login" , new_account_session_path , class:"nav-link" %>
+            <% end %>
           </div>
         </div>
       </div>
     </nav>
     <div class="container" >
+      <% if flash[:notice] %>
+          <div class="alert alert-warning alert-dismissible fade show w-50" role="alert" style="margin-left:25%;margin-top:2%;">
+                  <%= flash[:notice] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      <% end %>
       <%= yield %>
     </div>
   </body>

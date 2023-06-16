@@ -1,0 +1,17 @@
+.sign_up,.logIn{
+    
+    width : 50%;
+    padding: 3%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+h1{
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    padding: 2%;
+    margin-bottom: 3%;
+}
+
+

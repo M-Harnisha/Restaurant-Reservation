@@ -1,14 +1,15 @@
 <%= stylesheet_link_tag 'table' %>
 <h1>Edit your order...</h1>
 
+
 <div class="edit_order bg-light text-dark">
-    <%= form_with model:@foods , url:reservation_order_items_new_url(restaurant_id:@restaurant.id,id:@reservation,order_id:@order.id) do |f|%>
+    <%= form_with model:@foods , url:reservation_order_items_new_url(id:@restaurant.id,reservation_id:@reservation,order_id:@order.id) do |f|%>
         
         <p> Select Menu Item &nbsp; &nbsp; 
         <%= f.collection_select :menu_id, @menus, :id , :name , class:"form-control" %></p>
            
         <%= label_tag(:quantity, "Quantity" , class:"form-label") %>
-        <%= text_field(:quantity, :food,class:"form-control") %>
+        <%= text_field(:quantity, :food ,class:"form-control") %>
         <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm w-100" %>
         
     <% end %>
@@ -21,7 +22,7 @@
                 <p>Menu Name : <%= food.name %></p>
                 <p>Quantity : <%= food.quantity %></p>
             </div>
-            <%= link_to "Destroy", reservation_order_items_delete_path(id:@reservation,restaurant_id:@reservation.restaurant_id,order_item_id:food.id), data: {
+            <%= link_to "Destroy", reservation_order_items_delete_path(reservation_id:@reservation,id:@reservation.restaurant_id,order_item_id:food.id), data: {
                                 turbo_method: :delete,
                                 turbo_confirm: "Are you sure?"
                             } , class:"col btn btn-danger btn-sm h-50" %>

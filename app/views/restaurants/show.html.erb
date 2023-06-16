@@ -12,12 +12,14 @@
       <p>ph.no:<%= @restaurant.contact %></p> 
       
       
-      <%= link_to "Edit" , edit_restaurant_url , class:"btn btn-primary btn-sm mr-5"%>
-      <%= link_to "Destroy", restaurant_path(@restaurant), data: {
-                          turbo_method: :delete,
-                          turbo_confirm: "Are you sure?"
-                        } , class:"btn btn-danger btn-sm" %>
-      <br>
+     <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+        <%= link_to "Edit" , edit_restaurant_url , class:"btn btn-primary btn-sm mr-5"%>
+        <%= link_to "Destroy", restaurant_path(@restaurant), data: {
+                         turbo_method: :delete,
+                         turbo_confirm: "Are you sure?"
+                       } , class:"btn btn-danger btn-sm" %>
+      <% end %>
+     <br>
     </div>
   </div>
 </div>
@@ -31,24 +33,26 @@
       <div class="card-body">
           <p>Table name: <%= table.name %></p>
           <p>Members occupy table:<%= table.member %></p>
-
-            <%= link_to "Edit",  edit_restaurant_table_path(table)  , class:" btn btn-primary btn-sm mr-10" %>
-            <%= link_to "Destroy", restaurant_table_path(table), data: {
+          
+          <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+            <%= link_to "Edit",  edit_restaurant_table_path(restaurant_id:@restaurant.id,id:table.id)  , class:" btn btn-primary btn-sm mr-10" %>
+            <%= link_to "Destroy", restaurant_table_path(restaurant_id:@restaurant.id,id:table.id), data: {
                               turbo_method: :delete,
                               turbo_confirm: "Are you sure?"
                             } , class:"btn btn-danger btn-sm"%>
+          <% end %>
       </div>
     </div>
   </div>
 <% end %>
 </div>
 
-
+<% if account_signed_in? and current_account.accountable_type=="Owner" %>
 <div>
   <h2>Add new table </h2>
   <%= render "/tables/form" , restaurant: @restaurant %>
 </div>
-
+<% end %>
 
 <h1>__Menu Items__</h1>
 <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -60,21 +64,28 @@
         <p>Name:&nbsp;&nbsp;<%= menu.name %></p>
         <p>Quantity:&nbsp;&nbsp;<%= menu.quantity %></p>
         <p>Rate:&nbsp;&nbsp;<%= menu.rate %></p>
-        <%= link_to "Edit",  edit_restaurant_menu_item_path(menu),class:"btn btn-primary btn-sm" %>
-        <%= link_to "Destroy", restaurant_menu_item_path(menu), data: {
+
+      <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+        <%= link_to "Edit",  edit_restaurant_menu_item_path(restaurant_id:@restaurant.id,id:menu.id),class:"btn btn-primary btn-sm" %>
+        <%= link_to "Destroy", restaurant_menu_item_path(restaurant_id:@restaurant.id,id:menu.id), data: {
                           turbo_method: :delete,
                           turbo_confirm: "Are you sure?"
                         } ,class:"btn btn-danger btn-sm" %>
+      <% end %>
       </div>
     </div>
   </div>
   <% end %>
 </div>
 
+<% if account_signed_in? and current_account.accountable_type=="Owner" %>
 <div>
   <h2>Add new menu </h2>
   <%= render "/menu_items/form" , restaurant: @restaurant %>
 </div>
+<% end %>
+
+<% if account_signed_in? and current_account.accountable_type=="User" %>
 
 <h1>__choose options for reserving table and ordering food__</h1>
 
@@ -98,4 +109,4 @@
   <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm" %>
 
 <% end %>
-
+<% end %>

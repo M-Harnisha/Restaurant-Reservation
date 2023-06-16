@@ -1,7 +1,7 @@
 <h1>Enter your ratings..</h1>
 <div class="rating bg-light text-dark">
 
-    <%= form_tag(reservation_rating_create_url(restaurant_id:@restaurant,id:@reservation), method: "post") do |form|%>
+    <%= form_tag(reservation_rating_create_url(id:@restaurant,reservation_id:@reservation), method: "post") do |form|%>
         
         <div class="mb-3 d-flex justify-content-around">
             <%= label_tag(@restaurant.id, @restaurant.name) %>

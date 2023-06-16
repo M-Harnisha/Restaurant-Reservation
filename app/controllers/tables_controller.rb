@@ -1,5 +1,7 @@
 class TablesController < ApplicationController
 
+    before_action :is_restaurant_owner , only: [:create,:edit,:update,:destroy]
+   
     def create 
         @restaurant = Restaurant.find(params[:restaurant_id])
         @table = @restaurant.tables.create(table_params)
@@ -7,8 +9,8 @@ class TablesController < ApplicationController
     end 
 
     def edit 
-        @restaurant = Restaurant.find(params[:id])
-        @table= Table.find(params[:restaurant_id])
+        @restaurant = Restaurant.find(params[:restaurant_id])
+        @table= Table.find(params[:id])
     end
 
     def update
@@ -22,14 +24,23 @@ class TablesController < ApplicationController
     end
 
     def destroy
-        @restaurant = Restaurant.find(params[:id])
-        @table = @restaurant.tables.find(params[:restaurant_id])
+        @restaurant = Restaurant.find(params[:restaurant_id])
+        @table = @restaurant.tables.find(params[:id])
         @table.destroy
         redirect_to @restaurant  
     end
 
     private
     def table_params
-        params.require(:table).permit(:name,:member,:booked)
+        params.require(:table).permit(:name,:member)
+    end
+
+    
+    def is_restaurant_owner 
+        @restaurant = Restaurant.find(params[:restaurant_id])
+        unless account_signed_in? and current_account.accountable_type=="Owner" and current_account.accountable_id==@restaurant.owner_id
+            flash[:notice] = "Owner permissions only!!"
+            redirect_to root_path
+        end
     end
 end

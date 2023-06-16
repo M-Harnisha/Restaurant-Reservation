@@ -6,35 +6,26 @@
   <div class="mb-3">
     <%= form.label :name ,class:"form-label" %>
     <%= form.text_field :name , class:"form-control" %>
-    <% restaurant.errors.full_messages_for(:name).each do |message| %>
-      <div class="form-text"><%= message %></div>
-    <% end %>
+   
   </div>
 
 
   <div class="mb-3">
     <%= form.label :contact,class:"form-label" %>
       <%= form.text_field :contact , class:"form-control"%>
-      <% restaurant.errors.full_messages_for(:contact).each do |message| %>
-          <div class="form-text"><%= message %></div>
-      <% end %>
   </div>
 
 
   <div class="mb-3">
     <%= form.label :address ,class:"form-label"%><br>
     <%= form.text_area :address , class:"form-control" %>
-    <% restaurant.errors.full_messages_for(:address).each do |message| %>
-        <div class="form-text"><%= message %></div>
-    <% end %>
+  
   </div>
     
   <div class="mb-3">
     <%= form.label :city ,class:"form-label"%>
     <%= form.text_field :city  , class:"form-control" %>
-    <% restaurant.errors.full_messages_for(:city).each do |message| %>
-        <div class="form-text"><%= message %></div>
-    <% end %>
+   
   </div>
 
 

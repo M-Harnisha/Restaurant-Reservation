@@ -45,3 +45,7 @@ h5{
 {
     margin-top: 3%;
 }
+
+.show_reservation .card-body div{
+    margin-left: 30%;
+}
