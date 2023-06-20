@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
   
 
   devise_for :accounts,controllers: {
@@ -23,6 +25,8 @@ post "restaurant/:id/reservations/index" , to: "reservations#index" , as:"reserv
   post "restaurant/:id/reservations/:type/confrim", to: "table_bookeds#confrim" , as:"reservation_table_confrim"
   get "reservations/show" , to: "table_bookeds#show" , as:"reservation_show"
   delete "restaurant/:id/reservations/:reservation_id", to: "table_bookeds#destroy" , as:"reservation_table_delete"
+  delete "restaurant/:id/reservations/:reservation_id/:table_id", to: "table_bookeds#destroy_each" , as:"reservation_table_each_delete"
+
   get "restaurant/:id/reservations/:reservation_id/edit" , to: "table_bookeds#edit" , as:"reservation_table_edit"
   post "restaurant/:id/reservations/:reservation_id/update" , to: "table_bookeds#update" , as:"reservation_table_update"
 

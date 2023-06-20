@@ -1,7 +1,7 @@
 class TableBookedsController < ApplicationController
     before_action :authenticate_account!
     
-    before_action :is_user , only: [:table,:show,:confrim,:edit,:update,:destroy]
+    before_action :is_user , only: [:table,:confrim,:edit,:update,:destroy]
 
     before_action :is_user_table , only: [:edit,:update,:destroy]
 
@@ -16,37 +16,45 @@ class TableBookedsController < ApplicationController
         @restaurant = Restaurant.find(params[:id])
         @type = params[:type]
         @date = params.require(:date_id)
-
-        if params.has_key?("table_book") && @date[:date].length!=0
+        @tables = @restaurant.tables 
+        if @date[:date].length!=0
             
-            @table = @restaurant.tables.find(params.require(:table_book))
             @reservations = Reservation.where(restaurant_id:@restaurant.id)
-            @flag=0
+            flag=0
             
             if @date.present? &&  Date.parse(@date[:date])< Date.today
                 redirect_to reservation_table_path(id:params[:id]), notice: "date cant't be in past"
             else 
                 if @reservations && @reservations.each do |reservation|
-                    if reservation.table_booked
-                        table = reservation.table_booked.table_id
-                        @table2 = @restaurant.tables.find(table)
-                        puts "`````````````````````"
-                        puts @table2.id
-                        puts @table.id
+                    if reservation.tables && reservation.tables.each do |table|
+
+                        @table2 = @restaurant.tables.find(table.id)
+                        
                         b = reservation.date
-                        if @table2 == @table &&  b.to_s == @date[:date].to_s
-                            @flag=1
+                        if @table2 == table &&  b.to_s == @date[:date].to_s
+                            
+                            flag=1
                             break
                         end
                     end
                 end
+                end
             end
-            if @flag==1
+            if flag==1
                 redirect_to reservation_table_path(id:params[:id]), notice: "Already booked"
             else
                 @reservation = @restaurant.reservations.new(user_id:current_account.accountable_id,date:@date[:date],restaurant_id:@restaurant.id)
-                if @reservation.save
-                    @table_book = @reservation.create_table_booked(table_id:@table.id,name:@table.name)
+                @reservation.save
+
+                @tables.each do |table|
+                    tableId = table.id.to_s
+                    if params.has_key?(tableId)
+                        flag=1
+                        @reservation.tables << table
+                    end    
+                end
+                
+                if flag==1
                     
                     if @type=="table"
                         redirect_to reservation_show_path
@@ -54,6 +62,7 @@ class TableBookedsController < ApplicationController
                         redirect_to reservation_food_path(id:@restaurant , reservation_id:@reservation.id)
                     end
                 else 
+                    @reservation.destroy
                     redirect_to reservation_table_path(id:params[:id]) 
                 end
             end
@@ -65,67 +74,81 @@ class TableBookedsController < ApplicationController
 
     def show
         if account_signed_in? and current_account.accountable_type=="User"
-            @user = User.find(current_account.accountable_id)
-            @restaurants = @user.restaurants.all.uniq
+            user = User.find(current_account.accountable_id)
+            @restaurants = user.restaurants.all.uniq
+            @latest_reservation = user.latest_reservation
+            @latest_order = user.latest_order
+        elsif account_signed_in? and current_account.accountable_type=="Owner"
+            owner = Owner.find(current_account.accountable_id)
+            @restaurants = owner.restaurants.all 
         end
     end
 
     def edit 
         @restaurant = Restaurant.find(params[:id])
-        @tables = @restaurant.tables
         @reservation = Reservation.find(params[:reservation_id])
+        @tables_all = @restaurant.tables
+        @tables = @reservation.tables
     end
 
     def update
         @reservation = Reservation.find(params[:reservation_id])
         @restaurant = Restaurant.find(params[:id])
-        @date = params.require(:date_id)
+        @tables = @restaurant.tables 
+        date = @reservation.date
 
-        if params.has_key?("table_book") && @date[:date].length!=0
-
-            @table = @restaurant.tables.find(params.require(:table_book))  
+        if params.has_key?("table_book")
+ 
             @reservations = Reservation.where(restaurant_id:@restaurant.id)
-            @flag=0
+            update_table = @restaurant.tables.find(params.require(:table_book))
+            flag=0
 
-            if @date.present? &&  Date.parse(@date[:date])< Date.today
-                redirect_to reservation_table_path(id:params[:id]), notice: "date cant't be in past"
-            else 
-                if @reservations && @reservations.each do |reservation|
-                    if reservation.table_booked
-                        table = reservation.table_booked.table_id
-                        @table2 = @restaurant.tables.find(table)
-                        b = reservation.date
-                        if @table2 == @table &&  b.to_s == @date[:date].to_s
-                            @flag=1
-                            break
-                        end
+    
+            if @reservations && @reservations.each do |reservation|
+                if reservation.tables.length!=0 && reservation.tables.each do |table|
+                    
+                    @table2 = @restaurant.tables.find(table.id)
+                    b = reservation.date
+                    if @table2 == update_table &&  b.to_s == date.to_s
+                        flag=1
+                        break
                     end
                 end
-            end
-                if @flag==1
-                    redirect_to reservation_table_edit_path(id:@restaurant,reservation_id:@reservation), notice: "Already booked"
-                else
-                    if @reservation.update(date:@date[:date],restaurant_id:@restaurant.id)
-                        if @reservation.table_booked.update(table_id:@table.id,name:@table.name)
-                            redirect_to reservation_show_url
-                        else 
-                            render :edit, status: :unprocessable_entity 
-                        end
-                    else 
-                        render :edit, status: :unprocessable_entity
-                    end
                 end
             end
+        end
+            if flag==1
+                redirect_to reservation_table_edit_path(id:@restaurant,reservation_id:@reservation), notice: "Already booked"
+            else
+                @reservation.tables << update_table
+            end
+            
         else
             redirect_to reservation_table_edit_path(id:@restaurant,reservation_id:@reservation), notice: "check whether you have filled all the details.."
         end  
     end
 
+    def destroy_each
+        @reservation = Reservation.find(params[:reservation_id])
+        table = Table.find(params[:table_id])
+        @reservation.tables.delete(table)
+        @reservation.save
+        table.save
+        if @reservation.tables.length==0 
+            @reservation.destroy
+        end
+        redirect_to root_path, status: :see_other
+    end
+
     def destroy
         @reservation = Reservation.find(params[:reservation_id])
-        if @reservation.order && @reservation.table_booked
-            @table = @reservation.table_booked
-            @table.destroy
+        tables = @reservation.tables
+        if @reservation.order
+            tables.each do |table|
+                @reservation.tables.delete(table)
+            end
+            @reservation.save
+            
         else
             @reservation.destroy
         end

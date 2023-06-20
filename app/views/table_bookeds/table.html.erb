@@ -9,8 +9,9 @@
                 <div class="row row-cols-2">
                         <% @tables.each do |table| %>
                                 <div class="col">
-                                <%= radio_button_tag(:table_book, table.id) %>
-                                <%= label_tag(:reservation_table, table.name) %>
+                                <p><%= check_box_tag table.id %>
+                                <%= label_tag(table.id, table.name) %></p>
+                                
                                 <p>Members occupy table : <%= table.member %></p>
                                 </div>
                         <% end %>

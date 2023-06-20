@@ -34,9 +34,18 @@
             <% end %>
             <%= link_to "Show my reservations" , reservation_show_url , class:"nav-link" %>
             <% if account_signed_in? %>
-            <%= button_to "Edit" ,   edit_account_registration_path  , method: :get, class:"nav-link bg-dark",style:"border:none;" %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <%= current_account.name %>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><%= button_to "Edit profile" ,   edit_account_registration_path  , method: :get, class:"nav-link",style:"border:none; background-color:white; color:black;" %>
+                </li>
+                <li><%= button_to "Sign out" ,  destroy_account_session_path , method: :delete, class:"nav-link ",style:"border:none; background-color:white; color:black;" %>
+                </li>
+              </ul>
+            </li>
 
-              <%= button_to "Sign out" ,  destroy_account_session_path , method: :delete, class:"nav-link bg-dark",style:"border:none;" %>
             <% else %>
               <%= link_to "login" , new_account_session_path , class:"nav-link" %>
             <% end %>

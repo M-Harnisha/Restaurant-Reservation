@@ -2,22 +2,22 @@
 
     <div class="mb-3">
       <%= form.label :name, class:"form-label"%><br>
-      <%= form.text_field :name  , class:"form-control" %>
+      <%= form.text_field :name  , class:"form-control" , required:true %>
     </div>
   
     <div class="mb-3">
       <%= form.label :quantity ,  class:"form-label"%>
-      <%= form.text_field :quantity ,  class:"form-control"  %>
+      <%= form.text_field :quantity ,  class:"form-control"  , required:true %>
     </div>
 
     <div class="mb-3">
       <%= form.label :rate ,  class:"form-label"%>
-      <%= form.text_field :rate ,  class:"form-control" %>
+      <%= form.text_field :rate ,  class:"form-control" , required:true %>
     </div>
 
     <div class="mb-3">
     <%= form.label :images ,  class:"form-label"%><br>
-      <%= form.file_field :images, multiple:false,  class:"form-control" %>
+      <%= form.file_field :images, multiple:false,  class:"form-control" , required:true %>
     </div>
 
     <div class="mb-3">

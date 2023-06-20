@@ -3,12 +3,12 @@ class ReservationsController < ApplicationController
     before_action :is_user , only: [:index]
 
     def index
-        @value = params.require(:reservation)
-        puts @value
+        value = params.require(:reservation)
+        puts value
         @restaurant = Restaurant.find(params[:id])
-        if @value=="Table"
+        if value=="Table"
             redirect_to reservation_table_path(id:params[:id],type:"table") 
-        elsif @value=="Food"
+        elsif value=="Food"
             redirect_to reservation_food_path(id:params[:id],reservation_id:"nil")
         else
             redirect_to reservation_table_path(id:params[:id],type:"table_food") 

@@ -5,33 +5,45 @@
 
   <div class="mb-3">
     <%= form.label :name ,class:"form-label" %>
-    <%= form.text_field :name , class:"form-control" %>
-   
+    <%= form.text_field :name , class:"form-control" , required:true %>
+    <% restaurant.errors.full_messages_for(:name).each do |message| %>
+      <div class="form-text"><%= message %></div>
+    <% end %>
   </div>
 
 
   <div class="mb-3">
     <%= form.label :contact,class:"form-label" %>
-      <%= form.text_field :contact , class:"form-control"%>
+      <%= form.text_field :contact , class:"form-control" , required:true %>
+      <% restaurant.errors.full_messages_for(:contact).each do |message| %>
+        <div class="form-text"><%= message %></div>
+      <% end %>
   </div>
 
 
   <div class="mb-3">
     <%= form.label :address ,class:"form-label"%><br>
-    <%= form.text_area :address , class:"form-control" %>
-  
+    <%= form.text_area :address , class:"form-control" , required:true  %>
+    <% restaurant.errors.full_messages_for(:address).each do |message| %>
+      <div class="form-text"><%= message %></div>
+    <% end %>
   </div>
     
   <div class="mb-3">
     <%= form.label :city ,class:"form-label"%>
-    <%= form.text_field :city  , class:"form-control" %>
-   
+    <%= form.text_field :city  , class:"form-control" , required:true  %>
+    <% restaurant.errors.full_messages_for(:city).each do |message| %>
+      <div class="form-text"><%= message %></div>
+    <% end %>
   </div>
 
 
   <div class="mb-3">
     <%= form.label :images ,class:"form-label"%>
-    <%= form.file_field :images, multiple:false , class:"form-control"%>
+    <%= form.file_field :images, multiple:false , class:"form-control" , required:true %>
+    <% restaurant.errors.full_messages_for(:images).each do |message| %>
+      <div class="form-text"><%= message %></div>
+    <% end %>
   </div>
 
   <%= form.submit  "submit" , class:"btn btn-success my-3" %>

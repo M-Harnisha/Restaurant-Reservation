@@ -45,6 +45,8 @@ gem "bootsnap", require: false
 gem 'devise', '~> 4.9', '>= 4.9.2'
 
 gem 'byebug'
+
+gem 'activeadmin'
 # Use Sass to process CSS
 # gem "sassc-rails"
 
@@ -65,6 +67,7 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+  gem "sass-rails"
 end
 
 group :test do

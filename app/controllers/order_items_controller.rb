@@ -14,7 +14,7 @@ class OrderItemsController < ApplicationController
     def new
         @reservation = Reservation.find(params[:reservation_id])
         @order = @reservation.order
-        @flag = 0
+        flag = 0
         if params.has_key?("quantity") and params.has_key?("order_item")
             @quantity = params[:quantity]
             @order_item = params[:order_item]
@@ -22,7 +22,7 @@ class OrderItemsController < ApplicationController
 
             if @quantity[:food]== "0" || @menu.quantity < @quantity[:food].to_i
                 flash[:notice] = "quantity avlailabe is #{@menu.quantity}"
-                @flag = 1
+                flag = 1
             end
 
             @new_record = @order.order_items.create(quantity:@quantity[:food],menu_id:@order_item[:menu_id],rate:@menu.rate,name:@menu.name)
@@ -34,9 +34,9 @@ class OrderItemsController < ApplicationController
             end
 
         else 
-            @flag = 1
+            flag = 1
         end
-        if @flag == 1  
+        if flag == 1  
             redirect_to reservation_order_edit_path(id:params[:id],reservation_id: @reservation) , notice: "Fill all the details..."
             return
         end

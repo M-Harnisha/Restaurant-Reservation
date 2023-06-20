@@ -7,4 +7,27 @@ class Restaurant < ApplicationRecord
     has_one_attached :images ,dependent: :destroy
     validates :name, :address , :contact , :city  , :images , presence:true
     validates :contact , length: { minimum: 10 } , format: { with: /[0-9]/ }
+    # scope :greater_than_75, -> { where('restaurants.id IN (?)', Restaurant.pluck(:id).select { |id| Restaurant.find(id).avg_ratings >= 75}) }
+
+
+  scope :rating_greater_than_75, -> { where('restaurants.id IN (?)', Restaurant.pluck(:id).select { |id| Restaurant.find(id).avg_ratings >= 75 }) }
+  
+  scope :most_reserved, -> {
+    joins(:reservations)
+      .group('restaurants.id')
+      .order('COUNT(reservations.id) DESC')
+      .limit(1)
+  }
+
+  def avg_ratings
+    average_rating = ratings.average(:value)
+    if average_rating
+     formatted_average_rating =  sprintf('%.2f', average_rating)
+     formatted_average_rating.to_f
+    else
+      0
+    end
+  end
+
+
 end
