@@ -9,11 +9,11 @@ ActiveAdmin.register MenuItem do
   #
   # or
   #
-  # permit_params do
-  #   permitted = [:name, :quantity, :rate, :restaurant_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  permit_params do
+    permitted = [:name, :quantity, :rate, :restaurant_id]
+    permitted << :other if params[:action] == 'create' && current_user.admin?
+    permitted
+  end
 
   scope :greater_than_75
   scope :most_ordered

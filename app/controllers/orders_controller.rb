@@ -65,6 +65,7 @@ class OrdersController < ApplicationController
 
 
     def destroy
+        puts " ``````````````````````````````````dgdgg`````````````````````````````````````````````````"
         @reservation = Reservation.find(params[:reservation_id])
         @orders = @reservation.order.order_items
         @orders.each do |order|
@@ -73,12 +74,14 @@ class OrdersController < ApplicationController
             @menu.update(quantity:q)
             @menu.save
         end
-        if @reservation.order && @reservation.table_booked
+
+        if @reservation.order && @reservation.tables.length!=0
             @food = @reservation.order
             @food.destroy
         else
             @reservation.destroy
         end
+        
         redirect_to root_path, status: :see_other
     end
 

@@ -7,11 +7,27 @@ class ReservationsController < ApplicationController
         puts value
         @restaurant = Restaurant.find(params[:id])
         if value=="Table"
-            redirect_to reservation_table_path(id:params[:id],type:"table") 
+
+            if @restaurant.tables.length==0 
+                redirect_to restaurant_path , notice:"No tables available..!"
+            else
+                redirect_to reservation_table_path(id:params[:id],type:"table") 
+            end
+
         elsif value=="Food"
-            redirect_to reservation_food_path(id:params[:id],reservation_id:"nil")
+            if @restaurant.menu_items.length==0 
+                redirect_to restaurant_path , notice:"No menu items available..!"
+            else
+                redirect_to reservation_food_path(id:params[:id],reservation_id:"nil")
+            end
         else
-            redirect_to reservation_table_path(id:params[:id],type:"table_food") 
+            if @restaurant.tables.length==0 
+                redirect_to restaurant_path , notice:"No tables available..!"
+            elsif @restaurant.menu_items.length==0 
+                redirect_to restaurant_path , notice:"No menu items available..!"
+            else
+                redirect_to reservation_table_path(id:params[:id],type:"table_food") 
+            end
         end
     end
 

@@ -5,6 +5,7 @@ class TablesController < ApplicationController
     def create 
         @restaurant = Restaurant.find(params[:restaurant_id])
         @table = @restaurant.tables.create(table_params)
+        @table.save
         redirect_to @restaurant
     end 
 

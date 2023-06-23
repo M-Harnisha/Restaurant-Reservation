@@ -33,4 +33,6 @@ ActiveAdmin.register Restaurant do
   filter :owner
   filter :contact
   filter :city
+  filter :reservations ,as: :select,collection: proc {Reservation.pluck(:id,:id)}
+
 end

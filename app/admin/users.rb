@@ -18,9 +18,16 @@ ActiveAdmin.register User do
   
   index do
     column :id
-    column :preference
+    column :preference do |i|
+      i.preference.map do |_,value|
+        value
+      end
+    end
    
     actions 
   end
+  filter :reservations ,as: :select,collection: proc {Reservation.pluck(:id,:id)}
+  filter :restaurants ,as: :select,collection: proc {Restaurant.pluck(:name,:id)}
+
 
 end

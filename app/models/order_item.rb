@@ -8,5 +8,8 @@ class OrderItem < ApplicationRecord
       .limit(2)
     }
 
-    validates :name , :rate , :quantity , :menu_id , presence:true
+    validates :name , :menu_id , presence:true
+    validates  :rate  , presence:true , numericality: { only_integer: true, greater_than: 0 }
+    validates :quantity , presence:true , numericality: { only_integer: true, greater_than: 0 }
+
 end

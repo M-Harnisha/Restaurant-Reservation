@@ -7,13 +7,17 @@
 
         <%= form_tag(reservation_table_confrim_path(id:@restaurant,type:@type), method: "post") do |f|%>
                 <div class="row row-cols-2">
-                        <% @tables.each do |table| %>
-                                <div class="col">
-                                <p><%= check_box_tag table.id %>
-                                <%= label_tag(table.id, table.name) %></p>
-                                
-                                <p>Members occupy table : <%= table.member %></p>
-                                </div>
+                        <% if @tables.length == 0 %>
+                                <h2>OOPS!..No table available</h2>
+                        <% else %>
+                                <% @tables.each do |table| %>
+                                        <div class="col">
+                                        <p><%= check_box_tag table.id %>
+                                        <%= label_tag(table.id, table.name) %></p>
+                                        
+                                        <p>Members occupy table : <%= table.member %></p>
+                                        </div>
+                                <% end %>
                         <% end %>
                 </div>
                 <hr>

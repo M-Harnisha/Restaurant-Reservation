@@ -39,8 +39,10 @@
                 <%= current_account.name %>
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><%= button_to "Edit profile" ,   edit_account_registration_path  , method: :get, class:"nav-link",style:"border:none; background-color:white; color:black;" %>
-                </li>
+                <% if false %>
+                  <li><%= button_to "Edit profile" ,   edit_account_registration_path  , method: :get, class:"nav-link",style:"border:none; background-color:white; color:black;" %>
+                  </li>
+                <% end %>
                 <li><%= button_to "Sign out" ,  destroy_account_session_path , method: :delete, class:"nav-link ",style:"border:none; background-color:white; color:black;" %>
                 </li>
               </ul>

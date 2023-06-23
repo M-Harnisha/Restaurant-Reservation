@@ -26,26 +26,34 @@
 
 
 <h1>__Tables__</h1>
-<div class="row row-cols-1 row-cols-md-4 table_details">
-<% @restaurant.tables.each do |table| %>
-  <div class="col">
-    <div class="card h-100">
-      <div class="card-body">
-          <p>Table name: <%= table.name %></p>
-          <p>Members occupy table:<%= table.member %></p>
-          
-          <% if account_signed_in? and current_account.accountable_type=="Owner" %>
-            <%= link_to "Edit",  edit_restaurant_table_path(restaurant_id:@restaurant.id,id:table.id)  , class:" btn btn-primary btn-sm mr-10" %>
-            <%= link_to "Destroy", restaurant_table_path(restaurant_id:@restaurant.id,id:table.id), data: {
-                              turbo_method: :delete,
-                              turbo_confirm: "Are you sure?"
-                            } , class:"btn btn-danger btn-sm"%>
-          <% end %>
+<% if @restaurant.tables.length==0 %>
+  <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+    <h5>No tables were added!</h5>
+  <% else %>
+    <h5>Oops!..no table available..</h5>
+  <% end %>
+<% else %>
+  <div class="row row-cols-1 row-cols-md-4 table_details">
+  <% @restaurant.tables.each do |table| %>
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+            <p>Table name: <%= table.name %></p>
+            <p>Members occupy table:<%= table.member %></p>
+            
+            <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+              <%= link_to "Edit",  edit_restaurant_table_path(restaurant_id:@restaurant.id,id:table.id)  , class:" btn btn-primary btn-sm mr-10" %>
+              <%= link_to "Destroy", restaurant_table_path(restaurant_id:@restaurant.id,id:table.id), data: {
+                                turbo_method: :delete,
+                                turbo_confirm: "Are you sure?"
+                              } , class:"btn btn-danger btn-sm"%>
+            <% end %>
+        </div>
       </div>
     </div>
+  <% end %>
   </div>
 <% end %>
-</div>
 
 <% if account_signed_in? and current_account.accountable_type=="Owner" %>
 <div>
@@ -55,7 +63,14 @@
 <% end %>
 
 <h1>__Menu Items__</h1>
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<% if @restaurant.menu_items.length==0 %>
+  <% if account_signed_in? and current_account.accountable_type=="Owner" %>
+    <h5>No menu items were added!</h5>
+  <% else %>
+    <h5>Oops!..no menu items available..</h5>
+  <% end %>
+<% else %>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
   <% @restaurant.menu_items.each do |menu| %>
   <div class="col">
     <div class="card" style="width: 20rem; height:25rem">
@@ -76,7 +91,8 @@
     </div>
   </div>
   <% end %>
-</div>
+  </div>
+<% end %>
 
 <% if account_signed_in? and current_account.accountable_type=="Owner" %>
 <div>

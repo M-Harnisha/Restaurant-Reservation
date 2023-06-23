@@ -1,17 +1,17 @@
 <%= stylesheet_link_tag 'table' %>
 
-<% if account_signed_in? and current_account.accountable_type=="User" %>
+<% if account_signed_in? and current_account.accountable_type=="User" and @latest_order%>
     <h1>Latest Order <h1>
 
     <div class="card mb-3" style="max-width: 540px;margin-left:23%">
       <div class="row g-0">
         <div class="col-md-5 d-flex align-items-center">
-          <%= image_tag(@latest_reservation.restaurant.images, style: "width: 100%; height: 200px;") %>
+          <%= image_tag(@latest_order.reservation.restaurant.images, style: "width: 100%; height: 200px;") %>
         </div>
         <div class="col-md-7">
           <div class="card-body" style="font-size:20px">
 
-            <h5 class="card-title" style="text-decoration:underline;"><%= @latest_reservation.restaurant.name.upcase %></h5>
+            <h5 class="card-title" style="text-decoration:underline;"><%= @latest_order.reservation.restaurant.name.upcase %></h5>
           
             <% @latest_order.order_items.each do |item| %>
 
@@ -28,21 +28,20 @@
 
 <div class="show_reservation">
 
-  <% @restaurants.each do |restaurant| %>
 
-    <% restaurant.reservations.each do |reservation| %>
+    <% @reservations.each do |reservation| %>
 
       <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
 
           <div class="col-md-5 d-flex align-items-center">
-            <%= image_tag(restaurant.images, style: "width: 100%; height: 200px;") %>
+            <%= image_tag(reservation.restaurant.images, style: "width: 100%; height: 200px;") %>
           </div>
 
           <div class="col-md-7">
             <div class="card-body">
 
-              <h5 class="card-title" style="text-decoration:underline;"><%= restaurant.name.upcase %></h5>
+              <h5 class="card-title" style="text-decoration:underline;"><%= reservation.restaurant.name.upcase %></h5>
               <div>
 
                 <% if account_signed_in? and current_account.accountable_type=="Owner" %>
@@ -53,18 +52,15 @@
                 <p class="card-title" >Tables:</p>
                   <% reservation.tables.each do |table| %>
                     <p class="card-text">Table name : <%= table.name %></p>
-                    <p class="card-text">Date : <%= reservation.date %></p>
-                    <% if account_signed_in? and current_account.accountable_type == "User" %>
-
-                      
-                    <% end %>
-                   
                   <% end %>
-                  <%= link_to "edit" , reservation_table_edit_url(id:restaurant.id , reservation_id:reservation.id) , class:"btn btn-primary btn-sm mr-5" %>
-                  <%= link_to "Destroy", reservation_table_delete_url(reservation_id:reservation,id:reservation.restaurant_id), data: {
-                                    turbo_method: :delete,
-                                    turbo_confirm: "Are you sure?"
-                                  } ,  class:"btn btn-danger btn-sm mr-5"%>
+                  <p class="card-text">Date : <%= reservation.date %></p>
+                    <% if account_signed_in? and current_account.accountable_type=="User" %>
+                      <%= link_to "edit" , reservation_table_edit_url(id:reservation.restaurant_id , reservation_id:reservation.id) , class:"btn btn-primary btn-sm mr-5" %>
+                      <%= link_to "Destroy", reservation_table_delete_url(reservation_id:reservation,id:reservation.restaurant_id), data: {
+                                      turbo_method: :delete,
+                                      turbo_confirm: "Are you sure?"
+                                    } ,  class:"btn btn-danger btn-sm mr-5"%>
+                    <% end %>
                 <% end %>
             
                 <% if reservation.order %>
@@ -80,11 +76,9 @@
                   
                 <% end %>
                 <% if account_signed_in? and current_account.accountable_type == "User" %>
-                  <%= link_to "edit" , reservation_order_edit_url(id:restaurant.id , reservation_id:reservation.id) ,  class:"btn btn-primary btn-sm mr-5"%>
-                  <%= link_to "Destroy", reservation_order_delete_url(reservation_id:reservation,id:reservation.restaurant_id), data: {
-                                    turbo_method: :delete,
-                                    turbo_confirm: "Are you sure?"
-                                  } ,  class:"btn btn-danger btn-sm mr-5"%>
+                
+                  <%= link_to "edit" , reservation_order_edit_url(id:reservation.restaurant_id , reservation_id:reservation.id) ,  class:"btn btn-primary btn-sm mr-5"%>
+                  <%= button_to "Destroy", reservation_order_delete_path(id:reservation.restaurant_id,reservation_id:reservation.id), class:"btn btn-danger btn-sm mr-5",method: :delete%>
                 
                 <% end %>
               <% end %>
@@ -94,6 +88,6 @@
         </div>
       </div>
   <% end %>
-  <% end %>
+
 
 </div>

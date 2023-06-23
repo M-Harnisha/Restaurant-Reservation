@@ -24,5 +24,5 @@ ActiveAdmin.register Order do
   end
 
   filter :rate
-  filter :reservation_id
+  filter :order_items, as: :select,collection: proc {OrderItem.pluck(:name,:id)}
 end

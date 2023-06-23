@@ -3,7 +3,7 @@
 
 <div class="book_table bg-light text-dark">
 
-        <%= form_tag(reservation_table_update_path(id:@restaurant,reservation_id:@reservation), method: "post") do |f|%>
+        <%= form_tag(reservation_table_update_path(id:@reservation.restaurant_id,reservation_id:@reservation), method: "post") do |f|%>
                 
                 <div class="row row-cols-2">
                         <%if @tables_all && @tables_all.each do |table| %>

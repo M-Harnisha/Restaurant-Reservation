@@ -21,5 +21,6 @@ class MenuItem < ApplicationRecord
       end
     end
 
-    validates :name , :quantity , :rate , presence:true
+    validates :name , presence:true
+    validates :quantity , :rate , presence:true ,numericality: { only_integer: true, greater_than: 0 }
 end

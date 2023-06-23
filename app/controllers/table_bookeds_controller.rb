@@ -26,47 +26,43 @@ class TableBookedsController < ApplicationController
                 redirect_to reservation_table_path(id:params[:id]), notice: "date cant't be in past"
             else 
                 if @reservations && @reservations.each do |reservation|
-                    if reservation.tables && reservation.tables.each do |table|
-
-                        @table2 = @restaurant.tables.find(table.id)
-                        
-                        b = reservation.date
-                        if @table2 == table &&  b.to_s == @date[:date].to_s
-                            
-                            flag=1
-                            break
+                    if reservation.date.to_s == @date[:date].to_s
+                        if reservation.tables && reservation.tables.each do |table1|
+                            if params.has_key?(table1.id.to_s)
+                                flag=1
+                                break
+                            end                               
+                        end
                         end
                     end
                 end
                 end
+
+                if flag!=1
+                    @reservation1 = @restaurant.reservations.new(user_id:current_account.accountable_id,date:@date[:date],restaurant_id:@restaurant.id)
+                    @reservation1.save
+                    @tables.each do |table|
+                        tableId = table.id.to_s
+                        if params.has_key?(tableId)
+                            flag=2
+                            @reservation1.tables << table
+                        end    
+                    end
+                end
+                
             end
             if flag==1
                 redirect_to reservation_table_path(id:params[:id]), notice: "Already booked"
+            elsif flag==0
+                @reservation1.destroy
+                redirect_to reservation_table_path(id:params[:id]) , notice:"No tables selected!!"
             else
-                @reservation = @restaurant.reservations.new(user_id:current_account.accountable_id,date:@date[:date],restaurant_id:@restaurant.id)
-                @reservation.save
-
-                @tables.each do |table|
-                    tableId = table.id.to_s
-                    if params.has_key?(tableId)
-                        flag=1
-                        @reservation.tables << table
-                    end    
-                end
-                
-                if flag==1
-                    
-                    if @type=="table"
-                        redirect_to reservation_show_path
-                    else 
-                        redirect_to reservation_food_path(id:@restaurant , reservation_id:@reservation.id)
-                    end
+                if @type=="table"
+                    redirect_to reservation_show_path
                 else 
-                    @reservation.destroy
-                    redirect_to reservation_table_path(id:params[:id]) 
+                    redirect_to reservation_food_path(id:@restaurant , reservation_id:@reservation.id)
                 end
             end
-        end
         else
             redirect_to reservation_table_path(id:@restaurant.id,type:@type) , notice: "check whether you have filled all the details.."
         end
@@ -75,8 +71,7 @@ class TableBookedsController < ApplicationController
     def show
         if account_signed_in? and current_account.accountable_type=="User"
             user = User.find(current_account.accountable_id)
-            @restaurants = user.restaurants.all.uniq
-            @latest_reservation = user.latest_reservation
+            @reservations = user.reservations
             @latest_order = user.latest_order
         elsif account_signed_in? and current_account.accountable_type=="Owner"
             owner = Owner.find(current_account.accountable_id)

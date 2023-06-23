@@ -3,8 +3,10 @@
 
 <%= form_with url:reservation_food_confrim_path(id:@restaurant,reservation_id:@reservation), method: :post do |f|%>
     <div class="row row-cols-2 g-10">
-    
-        <% @menus.each do |menu| %>
+        <% if @menus.length == 0 %>
+            <h2>OOPS! No items available</h2>
+        <% else %>
+          <% @menus.each do |menu| %>
             <% if menu.quantity > 0 %>
                 <div class="col mt-5">
                     <p><%= check_box_tag menu.id %>
@@ -17,6 +19,7 @@
                         <%= quantity_form.number_field menu.id , in:1..menu.quantity %>
                     <% end %>
                 </div>
+            <% end %>
             <% end %>
         <% end %>
     </div>

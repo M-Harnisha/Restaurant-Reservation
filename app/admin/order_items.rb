@@ -35,4 +35,5 @@ ActiveAdmin.register OrderItem do
   filter :rate
   filter :menu_id
   filter :name
+  
 end

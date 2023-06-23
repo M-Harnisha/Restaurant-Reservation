@@ -4,17 +4,17 @@
 
   <div class="mb-3">
     <%= form.label :name, class:"form-label"%><br>
-    <%= form.text_field :name  , class:"form-control" %>
+    <%= form.text_field :name  , class:"form-control" , required:true %>
   </div>
 
   <div class="mb-3">
     <%= form.label :quantity ,  class:"form-label"%>
-    <%= form.text_field :quantity ,  class:"form-control"  %>
+    <%= form.number_field :quantity ,  class:"form-control" , required:true %>
   </div>
 
   <div class="mb-3">
     <%= form.label :rate ,  class:"form-label"%>
-    <%= form.text_field :rate ,  class:"form-control" %>
+    <%= form.number_field :rate ,  class:"form-control" , required:true%>
   </div>
 
   <div class="mb-3">
