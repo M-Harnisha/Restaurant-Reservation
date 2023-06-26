@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :owner do
-    account
-    food_service_id{"owner-01"}
+    food_service_id{"12345678910125"}
   end
 end

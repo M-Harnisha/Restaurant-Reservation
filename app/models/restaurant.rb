@@ -9,8 +9,10 @@ class Restaurant < ApplicationRecord
 
     #validations
 
-    validates :name, :address , :contact , :city  , :images , presence:true
-    validates :contact , length: { minimum: 10 , maximum: 10} , format: { with: /[0-9]/ }
+    validates :name, presence:true , length: { minimum: 3 , maximum: 25}
+    validates :address , length: { minimum: 5 , maximum: 30} 
+    validates :city  , presence: true ,  length: { minimum: 4 , maximum: 15} 
+    validates :contact , presence:true, length: { minimum: 10 , maximum: 10} , numericality: { only_integer: true, greater_than: 0 }
     
     before_create :make_city_lower
 

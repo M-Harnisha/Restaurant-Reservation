@@ -60,17 +60,10 @@ class Accounts::RegistrationsController < Devise::RegistrationsController
   #   super(resource)
   # end
 def create
-  puts ".................................."
-  puts role_params
-  if role_params[:role] === 'Owner'
-    p'````````````````sdfghjhgfd`````````````````'
-  end
+
   accountable = if role_params[:role] === 'Owner'
                 Owner.new(owner_params)  
               else
-                puts user_params
-                puts "`````````````````````````````"
-               
                 arr = Array.new()
                 user_params.each do |key, value|
                   if value=="1"
@@ -78,14 +71,19 @@ def create
                   end
                 end
 
-                hash={"type"=>arr}
-                puts hash
-                User.new(preference:hash)
+                # hash={"type"=>arr}
+                # puts hash
+                user = User.new()
+                user.preference["type"] = arr
+                user
               end
 
-  accountable.save
+  if accountable
+    accountable.save
+  else 
+    redirect_to  new_account_registration_path, notice:"Unable to save"
+  end
   
-  puts "````````````````````````````````"
   build_resource(sign_up_params)
 
   resource.name = params[:account][:name]

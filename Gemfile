@@ -49,6 +49,9 @@ gem 'byebug'
 
 gem 'activeadmin'
 
+
+gem "rails-controller-testing"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 Doorkeeper.configure do
   # Change the ORM that doorkeeper will use (requires ORM extensions installed).
@@ -9,11 +10,7 @@ Doorkeeper.configure do
   #   raise "Please configure doorkeeper resource_owner_authenticator block located in #{__FILE__}"
   #   # Put your resource owner authentication logic here.
   #   # Example implementation:
-  #   #   
-  
-
-  
-  # .find_by(id: session[:user_id]) || redirect_to(new_user_session_url)
+  #   #   User.find_by(id: session[:user_id]) || redirect_to(new_user_session_url)
   # end
   resource_owner_from_credentials do
     Account.authenticate(params[:email],params[:password])
@@ -42,7 +39,7 @@ Doorkeeper.configure do
 
   # You can use your own model classes if you need to extend (or even override) default
   # Doorkeeper models such as `Application`, `AccessToken` and `AccessGrant.
-  #
+  # 
   # Be default Doorkeeper ActiveRecord ORM uses it's own classes:
   #
   # access_token_class "Doorkeeper::AccessToken"
@@ -522,5 +519,3 @@ Doorkeeper.configure do
   #
   # realm "Doorkeeper"
 end
-
-	

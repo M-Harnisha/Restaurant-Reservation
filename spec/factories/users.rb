@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :user do
-    preferences:{type=>["vegetarian"]}
-    account
+    preference {{"type"=>["vegetarian", "non-Vegetarian"]}}
   end
 end

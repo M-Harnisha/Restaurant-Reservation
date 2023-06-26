@@ -21,14 +21,15 @@ ActiveAdmin.register_page "Dashboard" do
       strong {link_to "View all Restaurants" , admin_restaurants_path }
     end
 
+    
     section "Recent Menu items" do 
       table_for MenuItem.order("created_at desc").limit(5) do
-        column :name do |restaurant|
-          link_to menu_item.name, [:admin,restaurant]
+        column :name do |menu_item|
+          link_to menu_item.name, [:admin,menu_item]
         end
         column :rate
       end
-      strong {link_to "View all Restaurants" , admin_restaurants_path }
+      strong {link_to "View all menu items" , admin_menu_items_path }
     end
 
     

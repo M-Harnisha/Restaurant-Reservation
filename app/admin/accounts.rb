@@ -23,4 +23,5 @@ ActiveAdmin.register Account do
     column :accountable_type
     actions 
   end
+  
 end
