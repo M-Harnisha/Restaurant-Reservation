@@ -18,8 +18,6 @@ class Api::RestaurantsController < Api::ApiController
         render json: {message:"No restaurants available" }, status: :no_content
       end
     end
-   
-
   end
 
   def show
@@ -31,14 +29,6 @@ class Api::RestaurantsController < Api::ApiController
     end
   end
 
-  def new 
-    restaurant = Restaurant.new()
-    if restaurant
-      render json: restaurant, status: :ok
-    else
-      render json: {message:"Can't create restaurant"}, status: :unprocessable_entity
-    end
-  end
 
   def create 
     owner = Owner.find_by(id: current_account.accountable_id)
@@ -54,14 +44,6 @@ class Api::RestaurantsController < Api::ApiController
     end
   end
 
-  def edit
-    restaurant = Restaurant.find_by(id: params[:id])
-    if restaurant
-      render json: restaurant , status: :ok
-    else 
-      render json: {message:"No restaurant is found with id #{params[:id]}"} , status: :not_found
-    end
-  end
 
   def update
     restaurant = Restaurant.find_by(id: params[:id])
@@ -146,7 +128,11 @@ class Api::RestaurantsController < Api::ApiController
   private 
   def is_owner
       unless current_account and current_account.accountable_type=="Owner"
-        render json:{message: "You are not authorized !" } , status: :unauthorized
+        if current_account
+          render json:{message: "You are not authorized !" } , status: :forbidden
+        else
+          render json:{message: "You are not signed in !" } , status: :unauthorized
+        end
       end
   end
 
@@ -154,7 +140,7 @@ class Api::RestaurantsController < Api::ApiController
     restaurant = Restaurant.find_by(id: params[:id])
     if restaurant
       unless current_account and current_account.accountable_id==restaurant.owner_id
-        render json:{message: "You are not authorized !" } , status: :unauthorized
+        render json:{message: "You are not authorized !" } , status: :forbidden
       end
     else
       render json: {message:"No restaurant is found with id #{params[:id]}"} , status: :not_found

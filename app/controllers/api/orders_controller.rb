@@ -55,13 +55,13 @@ class Api::OrdersController < Api::ApiController
                     end
                     if total_rate==0 && reservationId=="nil"
                         if reservation.destroy
-                            render json: reservation , status: :see_other
+                            render json: {message:"No order is selected"} , status: :unprocessable_entity
                         else
                             render json: {message:reservation.errors.full_messages}, status: :unprocessable_entity
                         end
                     elsif total_rate==0
                         if food.destroy
-                            render json: food , status: :see_other
+                            render json: {message:"No order is selected"} , status: :unprocessable_entity
                         else
                             render json: {message:food.errors.full_messages}, status: :unprocessable_entity
                         end
@@ -84,33 +84,6 @@ class Api::OrdersController < Api::ApiController
             render json: {message:"Can't get restaurant "}, status: :not_found
         end
     end
-
-    def edit
-        restaurant = Restaurant.find_by(id: params[:id])
-        if restaurant
-            menus = restaurant.menu_items
-            unless menus
-                render json: {message:"Can't get menu"}, status: :ok
-            end
-            reservation = Reservation.find_by(id: params[:reservation_id])
-            if reservation
-                order = reservation.order
-                if order
-                    foods = order.order_items
-                    render json: foods , status: :ok
-                else
-                    render json: {message:"Can't get order"}, status: :no_content
-                end
-            else
-                render json: {message:"Can't get reservation"}, status: :not_found
-            end
-        else
-            render json: {message:"Can't get restaurant"}, status: :not_found
-        end
-
-
-    end
-
 
     def destroy
         reservation = Reservation.find_by(id: params[:reservation_id])
@@ -166,16 +139,24 @@ class Api::OrdersController < Api::ApiController
     end
 
     private 
-   def is_user
-        unless current_account and current_account.accountable_type=="User"
-            render json:{message: "You are not authorized !" } , status: :unauthorized 
+    def is_user
+        unless current_account and current_account.accountable_type == "User"
+            if current_account
+                render json:{message: "You are not authorized !" } , status: :forbidden 
+            else
+                render json:{message: "You are not singed in  !" } , status: :unauthorized 
+            end
         end
    end
 
     def is_user_order
         reservation = Reservation.find_by(id: params[:reservation_id])
-        unless reservation and current_account and current_account.accountable_type=="User" and current_account.accountable_id==reservation.user_id
-            render json:{message: "You are not authorized !" } , status: :unauthorized 
+        if reservation
+            unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==reservation.user_id
+                render json:{message: "You are not authorized !" } , status: :forbidden   
+            end
+        else
+            render json: {message:"No reservation is found with id #{params[:reservation_id]}"} , status: :not_found
         end
     end
 

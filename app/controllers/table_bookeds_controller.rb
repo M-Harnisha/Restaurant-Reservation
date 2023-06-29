@@ -1,70 +1,87 @@
 class TableBookedsController < ApplicationController
-    before_action :authenticate_account!
+    before_action :is_signed_in , only: [:show]
     
-    before_action :is_user , only: [:table,:confrim,:edit,:update,:destroy]
+    before_action :is_user , only: [:table,:confrim,:edit,:update,:destroy,:destroy_each]
 
-    before_action :is_user_table , only: [:edit,:update,:destroy]
+    before_action :is_user_table , only: [:edit,:update,:destroy,:destroy_each]
 
 
     def table 
         @restaurant = Restaurant.find(params[:id])
         @tables = @restaurant.tables
         @type = params[:type]
+        unless @type=="table" or @type=="food" or @type=="table_food"
+            redirect_to root_path , notice:"Invalid type"
+        end
     end
 
     def confrim
-        @restaurant = Restaurant.find(params[:id])
-        @type = params[:type]
-        @date = params.require(:date_id)
-        @tables = @restaurant.tables 
-        if @date[:date].length!=0
-            
-            @reservations = Reservation.where(restaurant_id:@restaurant.id)
-            flag=0
-            
-            if @date.present? &&  Date.parse(@date[:date])< Date.today
-                redirect_to reservation_table_path(id:params[:id]), notice: "date cant't be in past"
-            else 
-                if @reservations && @reservations.each do |reservation|
-                    if reservation.date.to_s == @date[:date].to_s
-                        if reservation.tables && reservation.tables.each do |table1|
-                            if params.has_key?(table1.id.to_s)
-                                flag=1
-                                break
-                            end                               
-                        end
-                        end
-                    end
-                end
-                end
-
-                if flag!=1
-                    @reservation1 = @restaurant.reservations.new(user_id:current_account.accountable_id,date:@date[:date],restaurant_id:@restaurant.id)
-                    @reservation1.save
-                    @tables.each do |table|
-                        tableId = table.id.to_s
-                        if params.has_key?(tableId)
-                            flag=2
-                            @reservation1.tables << table
-                        end    
-                    end
-                end
-                
+        if @restaurant = Restaurant.find_by(id: params[:id])
+            @type = params[:type]
+            unless @type=="table" or @type=="food" or @type=="table_food"
+                redirect_to root_path , notice:"Invalid type"
+                return
             end
-            if flag==1
-                redirect_to reservation_table_path(id:params[:id]), notice: "Already booked"
-            elsif flag==0
-                @reservation1.destroy
-                redirect_to reservation_table_path(id:params[:id]) , notice:"No tables selected!!"
-            else
-                if @type=="table"
-                    redirect_to reservation_show_path
+            @date = params.require(:date_id)
+            @tables = @restaurant.tables 
+            if @date[:date].length!=0
+                
+                @reservations = Reservation.where(restaurant_id:@restaurant.id)
+                flag=0
+                
+                if @date.present? &&  Date.parse(@date[:date])< Date.today
+                    redirect_to reservation_table_path(id:params[:id]), notice: "date cant't be in past"
+                    return
                 else 
-                    redirect_to reservation_food_path(id:@restaurant , reservation_id:@reservation.id)
+                    if @reservations && @reservations.each do |reservation|
+                        if reservation.date.to_s == @date[:date].to_s
+                            if reservation.tables && reservation.tables.each do |table1|
+                                if params.has_key?(table1.id.to_s)
+                                    flag=1
+                                    break
+                                end                               
+                            end
+                            end
+                        end
+                    end
+                    end
+
+                    if flag==0
+                        @reservation1 = @restaurant.reservations.new(user_id:current_account.accountable_id,date:@date[:date],restaurant_id:@restaurant.id)
+                        @reservation1.save
+                        @tables.each do |table|
+                            tableId = table.id.to_s
+                            if params.has_key?(tableId)
+                                flag=2
+                                @reservation1.tables << table
+                            end    
+                        end
+                    end
+                    
                 end
+                if flag==1
+                    redirect_to reservation_table_path(id:params[:id]), notice: "Already booked"
+                    return
+                elsif flag==0 and @reservation1 
+                    @reservation1.destroy
+                    redirect_to reservation_table_path(id:params[:id]) , notice:"No tables selected!!"
+                    return
+                else
+                    if @type=="table"
+                        redirect_to reservation_show_path
+                        return
+                    else 
+                        redirect_to reservation_food_path(id:@restaurant , reservation_id:@reservation1.id) , notice:'reserve food now!!'
+                        return
+                    end
+                end
+            else
+                redirect_to reservation_table_path(id:@restaurant.id,type:@type) , notice: "check whether you have filled all the details.."
+                return
             end
         else
-            redirect_to reservation_table_path(id:@restaurant.id,type:@type) , notice: "check whether you have filled all the details.."
+            redirect_to root_path , notice: "Invalid restaurant"
+            return
         end
     end
 
@@ -116,6 +133,8 @@ class TableBookedsController < ApplicationController
                 redirect_to reservation_table_edit_path(id:@restaurant,reservation_id:@reservation), notice: "Already booked"
             else
                 @reservation.tables << update_table
+                redirect_to reservation_table_edit_path(id:@restaurant,reservation_id:@reservation), notice: "Updated successfully"
+
             end
             
         else
@@ -125,14 +144,17 @@ class TableBookedsController < ApplicationController
 
     def destroy_each
         @reservation = Reservation.find(params[:reservation_id])
-        table = Table.find(params[:table_id])
-        @reservation.tables.delete(table)
-        @reservation.save
-        table.save
-        if @reservation.tables.length==0 
-            @reservation.destroy
+        if table = Table.find_by(id: params[:table_id])
+            @reservation.tables.delete(table)
+            @reservation.save
+            table.save
+            if @reservation.tables.length==0 
+                @reservation.destroy
+            end
+            redirect_to reservation_show_path, notice:"Deleted successfully"
+        else
+            redirect_to root_path, notice:"Not found!.."
         end
-        redirect_to root_path, status: :see_other
     end
 
     def destroy
@@ -147,26 +169,44 @@ class TableBookedsController < ApplicationController
         else
             @reservation.destroy
         end
-        redirect_to root_path, status: :see_other
+        redirect_to root_path, notice:"Deleted successfully"
     end
 
     private 
-   def is_user
-        unless account_signed_in? and current_account.accountable_type=="User"
+    def is_user
+        unless account_signed_in? and current_account.accountable_type == "User"
             flash[:notice] = "User permissions only!!"
+            
             if account_signed_in? 
                 redirect_to root_path
             else 
                 redirect_to new_account_session_path
             end
         end
-   end
+    end
 
     def is_user_table
-        @reservation = Reservation.find(params[:reservation_id])
         unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==@reservation.user_id
-            flash[:notice] = "only booked user can make changes!"
+            if account_signed_in?
+                flash[:notice] = "only booked user can make changes!"
             redirect_to root_path
+            else
+                redirect_to new_account_session_path
+            end
+        end
+    end
+
+    def is_signed_in
+        unless account_signed_in? 
+            redirect_to root_path
+        end
+    end
+
+    def is_restaurant
+        if @restaurant = Restaurant.find_by(id: params[:restaurant_id])
+          @restaurant
+        else
+          redirect_to root_path , notice:"No restaurant is available with given id"
         end
     end
 

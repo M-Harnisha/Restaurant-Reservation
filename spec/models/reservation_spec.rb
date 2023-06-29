@@ -7,7 +7,7 @@ RSpec.describe Reservation, type: :model do
         context "when date field is nil" do
            let(:reservation) {build(:reservation,date:nil)}
             before do
-              reservation.save
+              reservation.validate
             end
             it "should return false" do
               expect(reservation.errors).to include(:date)
@@ -17,7 +17,7 @@ RSpec.describe Reservation, type: :model do
         context "when date field is empty" do
           let(:reservation) {build(:reservation,date:"")}
            before do
-             reservation.save
+             reservation.validate
            end
            it "should return false" do
              expect(reservation.errors).to include(:date)
@@ -27,7 +27,7 @@ RSpec.describe Reservation, type: :model do
           context "when date format is not correct" do
             let(:reservation) {build(:reservation,date:"2\3")}
               before do
-                reservation.save
+                reservation.validate
               end
               it "should return false" do
                 expect(reservation.errors).to include(:date)
@@ -37,7 +37,7 @@ RSpec.describe Reservation, type: :model do
           context "when date is in past" do
             let(:reservation) {build(:reservation,date:"2003/05/10")}
               before do
-                reservation.save
+                reservation.validate
               end
               it "should return false" do
                 expect(reservation.errors).to include(:date)
@@ -47,7 +47,7 @@ RSpec.describe Reservation, type: :model do
           context "when date format is correct" do
             let(:reservation) {build(:reservation)}
               before do
-                reservation.save
+                reservation.validate
               end
               it "should return true" do
                 expect(reservation.errors).to_not include(:date)

@@ -2,7 +2,7 @@ class Api::TableBookedsController < Api::ApiController
 
     # before_action :authenticate_account!
     
-    before_action :is_user , only: [:table,:confrim]
+    before_action :is_user , only: [:table,:confrim,:edit,:update,:destroy,:destroy_each]
 
     before_action :is_user_table , only: [:edit,:update,:destroy,:destroy_each]
 
@@ -13,12 +13,20 @@ class Api::TableBookedsController < Api::ApiController
             tables = restaurant.tables
             type = params[:type]
             if tables
+                unless type=="table" or type=="food" or type=="table_food"
+                    render json: {message:"Invalid type"} , status: :unprocessable_entity
+                    return
+                end
                 render json: tables , status: :ok
+                return
             else
                 render json: {message:"No table is found for restaurant with this id #{params[:id]}"}, status: :no_content
+                return
             end
         else 
             render json: {message:"No restaurant is found with this id #{params[:id]}"}, status: :not_found
+            return
+
         end
     end
 
@@ -28,61 +36,77 @@ class Api::TableBookedsController < Api::ApiController
             tables = restaurant.tables 
             type = params[:type]
             date = params.require(:date_id)
-            if tables
+            
+            unless type=="table" or type=="food" or type=="table_food"
 
-                if date and date[:date].length!=0
-                    reservations = Reservation.where(restaurant_id:restaurant.id)
-                    flag=0
-                    
-                    if date.present? &&  Date.parse(date[:date])< Date.today
-                        render json: {message:"Date can't be in past"} , status: :not_acceptable
-                    else 
-                        if reservations && reservations.each do |reservation|
-                            if reservation.date.to_s == date[:date].to_s
-                                if reservation.tables && reservation.tables.each do |table1|
-                                    if params.has_key?(table1.id.to_s)
-                                        flag=1
-                                        
-                                        break
-                                    end                               
-                                end
-                                end
-                            end
-                        end
-                        end
-        
-                        if flag!=1
-                            reservation1 = restaurant.reservations.new(user_id:12,date:date[:date],restaurant_id:restaurant.id)
-                            if reservation1.save
-                                tables.each do |table|
-                                    tableId = table.id.to_s
-                                    if params.has_key?(tableId)
-                                        flag=2
-                                        reservation1.tables << table
-                                    end    
-                                end
-                            else
-                                render json: {errors: reservation1.errors.full_messages} , status: :unprocessable_entity 
-                            end
-                        end
+                render json: {message:"Invalid type"} , status: :unprocessable_entity
+                return
+            else
+                if tables
+
+                    if date and date[:date].length!=0
+                        reservations = Reservation.where(restaurant_id:restaurant.id)
+                        flag=0
                         
-                    end
-                    if flag==1
-                        render json: {message: "Table was already booked"} , status: :not_acceptable
-                    elsif flag==0
-                        reservation1.destroy
-                        render json: {message: "No tables were selected"} , status: :not_acceptable
+                        if date.present? &&  Date.parse(date[:date])< Date.today
+
+                            render json: {message:"Date can't be in past"} , status: :unprocessable_entity
+                            return
+                        else 
+                            if reservations && reservations.each do |reservation|
+                                if reservation.date.to_s == date[:date].to_s
+                                    if reservation.tables && reservation.tables.each do |table1|
+                                        if params.has_key?(table1.id.to_s)
+                                            flag=1
+                                            
+                                            break
+                                        end                               
+                                    end
+                                    end
+                                end
+                            end
+                            end
+            
+                            if flag!=1
+                                reservation1 = restaurant.reservations.create(user_id:current_account.accountable_id,date:date[:date],restaurant:restaurant)
+                                if reservation1.save
+                                    tables.each do |table|
+                                        tableId = table.id.to_s
+                                        if params.has_key?(tableId)
+                                            flag=2
+                                            reservation1.tables << table
+                                        end    
+                                    end
+                                else
+                                    render json: {errors: reservation1.errors.full_messages} , status: :unprocessable_entity 
+                                    return
+                                end
+                            end
+                            
+                        end
+                        if flag==1
+                            render json: {message: "Table was already booked"} , status: :unprocessable_entity
+                            return
+                        elsif flag==0
+                            reservation1.destroy
+                            render json: {message: "No tables were selected"} , status: :unprocessable_entity
+                            return
+                        else
+                            render json: {reservation: reservation1,reservation_table: reservation1.tables} , status: :ok
+                            return
+                        end
                     else
-                        render json: {reservation: reservation1,reservation_table: reservation1.tables} , status: :ok
+                        render json: {message: "Date was not selected"} , status: :unprocessable_entity
+                        return
                     end
                 else
-                    render json: {message: "Date was not selected"} , status: :not_acceptable
+                    render json: {message: "No tables is found for restaurant with this id #{params[:id]}"}, status: :not_found
+                    return
                 end
-            else
-                render json: {message: "No tables is found for restaurant with this id #{params[:id]}"}, status: :not_found
             end
         else
             render json: {message:"No restaurant is found with this id #{params[:id]}"}, status: :not_found
+            return
         end     
     end
 
@@ -112,16 +136,6 @@ class Api::TableBookedsController < Api::ApiController
         end
     end
 
-    def edit 
-        reservation = Reservation.find_by(id: params[:reservation_id])
-        if reservation
-            tables_all = reservation.restaurant.tables
-            tables = reservation.tables
-            render json: {restaurant_tables: tables_all , reservation_tables: tables} , status: :ok
-        else
-            render json: {message: "No reservation is found with id #{params[:reservation_id]}"} , status: :not_found
-        end
-    end
 
     def update
         reservation = Reservation.find_by(id: params[:reservation_id])
@@ -151,7 +165,7 @@ class Api::TableBookedsController < Api::ApiController
                 end
 
                 if flag==1
-                    render json: {message:"Table was already booked"} , status: :not_acceptable
+                    render json: {message:"Table was already booked"} , status: :unprocessable_entity
                 else
                     reservation.tables << update_table
                     render json: reservation.tables , status: :ok
@@ -159,7 +173,7 @@ class Api::TableBookedsController < Api::ApiController
                 end
                 
             else
-                render json: {message:"Fill all the details"} , status: :not_acceptable
+                render json: {message:"Fill all the details"} , status: :unprocessable_entity
             end  
         else 
             render json: {message: "No reservation is found with id #{params[:reservation_id]}"} , status: :not_found
@@ -173,7 +187,7 @@ class Api::TableBookedsController < Api::ApiController
             if table
                 reservation.tables.delete(table)
                 if reservation.save
-                    table.save
+                   
                     if reservation.tables.length==0 
                         reservation.destroy
                         render json: {message: "Reservation is destroyed.since there is no tables.."} , status: :see_other
@@ -214,7 +228,11 @@ class Api::TableBookedsController < Api::ApiController
     private 
    def is_user
         unless current_account and current_account.accountable_type == "User"
-            render json:{message: "You are not authorized !" } , status: :unauthorized 
+            if current_account
+                render json:{message: "You are not authorized !" } , status: :forbidden 
+            else
+                render json:{message: "You are not singed in  !" } , status: :unauthorized 
+            end
         end
    end
 
@@ -222,7 +240,7 @@ class Api::TableBookedsController < Api::ApiController
         reservation = Reservation.find_by(id: params[:reservation_id])
         if reservation
             unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==reservation.user_id
-                render json:{message: "You are not authorized !" } , status: :unauthorized   
+                render json:{message: "You are not authorized !" } , status: :forbidden   
             end
         else
             render json: {message:"No reservation is found with id #{params[:reservation_id]}"} , status: :not_found

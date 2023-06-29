@@ -16,7 +16,7 @@ class OrderItemsController < ApplicationController
                 @reservation.destroy
             end
         end
-        redirect_to reservation_show_path
+        redirect_to reservation_show_path , notice: "Deleted successfully"
     end
 
     def new
@@ -50,10 +50,17 @@ class OrderItemsController < ApplicationController
 
     private
     def is_user_order
-        @reservation = Reservation.find(params[:reservation_id])
-        unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==@reservation.user_id
-            flash[:notice] = "only booked user can make changes!"
-            redirect_to root_path
+        if @reservation = Reservation.find_by(id: params[:reservation_id])
+            unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==@reservation.user_id
+                if account_signed_in?
+                    flash[:notice] = "only booked user can make changes!"
+                    redirect_to root_path
+                else
+                    redirect_to new_account_session_path
+                end
+            end
+        else
+            redirect_to root_path, notice:"Not found!.."
         end
     end
 end

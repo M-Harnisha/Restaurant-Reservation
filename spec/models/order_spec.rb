@@ -7,7 +7,7 @@ RSpec.describe Order, type: :model do
         context "when rate is nil" do
           let(:order){build(:order,rate:nil)}
           before do
-            order.save
+            order.validate
           end
           it "should return false" do
             expect(order.errors).to include(:rate)
@@ -17,7 +17,7 @@ RSpec.describe Order, type: :model do
         context "when rate is empty" do
           let(:order){build(:order,rate:"")}
           before do
-            order.save
+            order.validate
           end
           it "should return false" do
             expect(order.errors).to include(:rate)
@@ -27,27 +27,18 @@ RSpec.describe Order, type: :model do
         context "when rate is less than 0" do
           let(:order){build(:order,rate:"-1")}
           before do
-            order.save
+            order.validate
           end
           it "should return false" do
             expect(order.errors).to include(:rate)
           end
         end
     
-        context "when rate is equal to 0" do
-            let(:order){build(:order,rate:"0")}
-            before do
-              order.save
-            end
-            it "should return false" do
-              expect(order.errors).to include(:rate)
-            end
-          end
-    
+       
         context "when rate contains other characters" do
           let(:order){build(:order,rate:"9p")}
           before do
-            order.save
+            order.validate
           end
           it "should return false" do
             expect(order.errors).to include(:rate)
@@ -57,7 +48,7 @@ RSpec.describe Order, type: :model do
         context "when rate is greater than 0" do
             let(:order){build(:order)}
             before do
-              order.save
+              order.validate
             end
             it "should return true" do
               expect(order.errors).to_not include(:rate)

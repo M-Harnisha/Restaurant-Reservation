@@ -7,7 +7,7 @@ RSpec.describe Rating, type: :model do
     context "when value is nil" do
       let(:rating){build(:rating,value:nil)}
       before do
-        rating.save
+        rating.validate
       end
       it "should return false" do
         expect(rating.errors).to include(:value)
@@ -17,7 +17,7 @@ RSpec.describe Rating, type: :model do
     context "when value is empty" do
       let(:rating){build(:rating,value:"")}
       before do
-        rating.save
+        rating.validate
       end
       it "should return false" do
         expect(rating.errors).to include(:value)
@@ -27,7 +27,7 @@ RSpec.describe Rating, type: :model do
     context "when value is less than 0" do
       let(:rating){build(:rating,value:"-1")}
       before do
-        rating.save
+        rating.validate
       end
       it "should return false" do
         expect(rating.errors).to include(:value)
@@ -38,7 +38,7 @@ RSpec.describe Rating, type: :model do
     context "when value contains other characters" do
       let(:rating){build(:rating,value:"9p")}
       before do
-        rating.save
+        rating.validate
       end
       it "should return false" do
         expect(rating.errors).to include(:value)
@@ -48,7 +48,7 @@ RSpec.describe Rating, type: :model do
     context "when value is greater than 100" do
         let(:rating){build(:rating,value:"10000")}
         before do
-          rating.save
+          rating.validate
         end
         it "should return false" do
           expect(rating.errors).to include(:value)
@@ -58,7 +58,7 @@ RSpec.describe Rating, type: :model do
     context "when value is between 0 and 100" do
       let(:rating){build(:rating)}
       before do
-        rating.save
+        rating.validate
       end
       it "should return true" do
         expect(rating.errors).to_not include(:value)

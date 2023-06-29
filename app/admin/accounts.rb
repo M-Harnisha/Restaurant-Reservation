@@ -9,11 +9,11 @@ ActiveAdmin.register Account do
   #
   # or
   #
-  # permit_params do
-  #   permitted = [:email, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :accountable_id, :accountable_type, :name, :contact]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  permit_params do
+    permitted = [:email, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :accountable_id, :accountable_type, :name, :contact]
+    permitted << :other if params[:action] == 'create' && current_user.admin?
+    permitted
+  end
   
   index do
     column :name

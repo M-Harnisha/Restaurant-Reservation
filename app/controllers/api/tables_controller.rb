@@ -16,21 +16,6 @@ class Api::TablesController < Api::ApiController
         end
     end 
 
-    def edit 
-        restaurant = Restaurant.find_by(id: params[:restaurant_id])
-        if restaurant 
-            table= Table.find_by(id: params[:id])
-            if table 
-                render json: table , status: :ok
-            else
-                render json: {message:"No table is found with id #{params[:id]}"} , status: :not_found
-            end
-        else
-            render json: {message:"No restaurant is found with id #{params[:restaurant_id]}"} , status: :not_found
-
-        end
-
-    end
 
     def update
         table =Table.find_by(id: params[:id])
@@ -71,7 +56,11 @@ class Api::TablesController < Api::ApiController
         restaurant = Restaurant.find_by(id: params[:restaurant_id])
         if restaurant
             unless current_account and current_account.accountable_type=="Owner" and current_account.accountable_id==restaurant.owner_id
-                render json:{message: "You are not authorized !" } , status: :unauthorized 
+                if current_account
+                    render json:{message: "You are not authorized !" } , status: :forbidden
+                else
+                    render json:{message: "You are not signed in !" } , status: :unauthorized
+                end
             end
         else
             render json: {message:"No restaurant is found with id #{params[:restaurant_id]}"} , status: :not_found

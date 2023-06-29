@@ -1,5 +1,5 @@
 class Api::OrderItemsController < Api::ApiController
-    # before_action :is_user_order , only: [:new,:destroy]
+    before_action :is_user_order , only: [:new,:destroy]
 
     def destroy
         reservation = Reservation.find_by(id: params[:reservation_id])
@@ -46,7 +46,7 @@ class Api::OrderItemsController < Api::ApiController
     def new
         reservation = Reservation.find_by(id: params[:reservation_id])
         if reservation
-            order = reservation.order
+            order = Order.find_by(id: params[:order_id])
             if order 
                 quantity = params[:quantity]
                 if quantity and quantity[:food]!="" and params.has_key?("order_item")
@@ -70,7 +70,7 @@ class Api::OrderItemsController < Api::ApiController
                     render json: {message:"Check you have filled all details"}, status: :not_acceptable
                 end
             else
-                render json: {message:"No order is found for reservation with this id #{params[:reservation_id]}"}, status: :no_content
+                render json: {message:"No order is found for reservation with this id #{params[:reservation_id]}"}, status: :not_found
             end
         else
             render json: {message:"No reservation is found with this id #{params[:reservation_id]}"}, status: :not_found
@@ -84,8 +84,12 @@ class Api::OrderItemsController < Api::ApiController
     def is_user_order
         reservation = Reservation.find_by(id: params[:reservation_id])
         if reservation
-            unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==@reservation.user_id
-                render json:{message: "You are not authorized !" } , status: :unauthorized 
+            unless current_account and current_account.accountable_type=="User" and current_account.accountable_id==reservation.user_id
+                if current_account
+                    render json:{message: "You are not authorized !" } , status: :forbidden 
+                else
+                    render json:{message: "You are not singed in  !" } , status: :unauthorized 
+                end
             end
         else
             render json: {message:"No reservation is found with this id #{params[:reservation_id]}"}, status: :not_found

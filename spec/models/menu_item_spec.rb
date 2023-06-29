@@ -7,7 +7,7 @@ RSpec.describe MenuItem, type: :model do
         context "when name field is nil" do
            let(:menu_item) {build(:menu_item,name:nil)}
             before do
-              menu_item.save
+              menu_item.validate
             end
             it "should return false" do
               expect(menu_item.errors).to include(:name)
@@ -17,7 +17,7 @@ RSpec.describe MenuItem, type: :model do
         context "when name field is empty" do
           let(:menu_item) {build(:menu_item,name:"")}
            before do
-             menu_item.save
+             menu_item.validate
            end
            it "should return false" do
              expect(menu_item.errors).to include(:name)
@@ -27,7 +27,7 @@ RSpec.describe MenuItem, type: :model do
         context "when name field is less than 3" do
           let(:menu_item) {build(:menu_item,name:"hr")}
             before do
-              menu_item.save
+              menu_item.validate
             end
             it "should return false" do
               expect(menu_item.errors).to include(:name)
@@ -37,7 +37,7 @@ RSpec.describe MenuItem, type: :model do
         context "when name field is greater than 15" do
         let(:menu_item) {build(:menu_item,name:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took ")}
             before do
-            menu_item.save
+            menu_item.validate
             end
             it "should return false" do
             expect(menu_item.errors).to include(:name)
@@ -47,7 +47,7 @@ RSpec.describe MenuItem, type: :model do
         context "when name field is between 3 and  15" do
         let(:menu_item) {build(:menu_item)}
             before do
-            menu_item.save
+            menu_item.validate
             end
             it "should return true" do
             expect(menu_item.errors).to_not include(:name)
@@ -61,7 +61,7 @@ RSpec.describe MenuItem, type: :model do
         context "when quantity is nil" do
           let(:menu_item){build(:menu_item,quantity:nil)}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:quantity)
@@ -71,7 +71,7 @@ RSpec.describe MenuItem, type: :model do
         context "when quantity is empty" do
           let(:menu_item){build(:menu_item,quantity:"")}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:quantity)
@@ -81,7 +81,7 @@ RSpec.describe MenuItem, type: :model do
         context "when quantity is less than 0" do
           let(:menu_item){build(:menu_item,quantity:"-1")}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:quantity)
@@ -91,7 +91,7 @@ RSpec.describe MenuItem, type: :model do
         context "when quantity is equal to 0" do
             let(:menu_item){build(:menu_item,quantity:"0")}
             before do
-              menu_item.save
+              menu_item.validate
             end
             it "should return false" do
               expect(menu_item.errors).to include(:quantity)
@@ -101,7 +101,7 @@ RSpec.describe MenuItem, type: :model do
         context "when quantity contains other characters" do
           let(:menu_item){build(:menu_item,quantity:"9p")}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:quantity)
@@ -111,7 +111,7 @@ RSpec.describe MenuItem, type: :model do
         context "when quantity is greater than 0" do
             let(:menu_item){build(:menu_item)}
             before do
-              menu_item.save
+              menu_item.validate
             end
             it "should return true" do
               expect(menu_item.errors).to_not include(:quantity)
@@ -125,7 +125,7 @@ RSpec.describe MenuItem, type: :model do
         context "when rate is nil" do
           let(:menu_item){build(:menu_item,rate:nil)}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:rate)
@@ -135,7 +135,7 @@ RSpec.describe MenuItem, type: :model do
         context "when rate is empty" do
           let(:menu_item){build(:menu_item,rate:"")}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:rate)
@@ -145,7 +145,7 @@ RSpec.describe MenuItem, type: :model do
         context "when rate is less than 0" do
           let(:menu_item){build(:menu_item,rate:"-1")}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:rate)
@@ -155,7 +155,7 @@ RSpec.describe MenuItem, type: :model do
         context "when rate is equal to 0" do
             let(:menu_item){build(:menu_item,rate:"0")}
             before do
-              menu_item.save
+              menu_item.validate
             end
             it "should return false" do
               expect(menu_item.errors).to include(:rate)
@@ -165,7 +165,7 @@ RSpec.describe MenuItem, type: :model do
         context "when rate contains other characters" do
           let(:menu_item){build(:menu_item,rate:"9p")}
           before do
-            menu_item.save
+            menu_item.validate
           end
           it "should return false" do
             expect(menu_item.errors).to include(:rate)
@@ -175,7 +175,7 @@ RSpec.describe MenuItem, type: :model do
         context "when rate is greater than 0" do
             let(:menu_item){build(:menu_item)}
             before do
-              menu_item.save
+              menu_item.validate
             end
             it "should return true" do
               expect(menu_item.errors).to_not include(:rate)

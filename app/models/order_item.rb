@@ -9,7 +9,7 @@ class OrderItem < ApplicationRecord
     }
 
     validates :name, presence:true , length:{ minimum:3 , maximum:15 }
-    validates  :rate  , presence:true , numericality: { only_integer: true, greater_than: 0 }
+    validates  :rate  , presence:true , numericality: { only_integer: true, greater_than: 0}
     validates :quantity , presence:true , numericality: { only_integer: true, greater_than: 0 }
     validates :menu_id , presence:true , numericality: { only_integer: true, greater_than: -1 }
 end
