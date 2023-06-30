@@ -25,7 +25,7 @@ RSpec.describe Reservation, type: :model do
         end
     
           context "when date format is not correct" do
-            let(:reservation) {build(:reservation,date:"2\3")}
+            let(:reservation) {build(:reservation,date:"abc")}
               before do
                 reservation.validate
               end

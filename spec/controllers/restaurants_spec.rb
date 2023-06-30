@@ -11,7 +11,7 @@ RSpec.describe RestaurantsController, type: :controller do
   let(:owner1) {create(:owner)}
   let(:owner1_account) {create(:account,:for_owner,accountable:owner1)}
 
-  let(:restaurant) {create(:restaurant,owner:owner)}
+  let(:restaurant) {create(:restaurant,owner:owner,city:"ERODE",name:"BBQ")}
 
   describe "get /restaurants#index" do
 
@@ -321,4 +321,22 @@ describe "delete /restaurants#destroy" do
   end
 end
 
+describe "callbacks" do
+  context "city to_lowercase" do
+    before do
+      restaurant.save
+    end
+    it "be in lowercase" do
+      expect(restaurant.city).to eq("erode")
+    end
+  end
+  context "name to_lowercase" do
+    before do
+      restaurant.save
+    end
+    it "be in lowercase" do
+      expect(restaurant.name).to eq("bbq")
+    end
+  end
+end
 end

@@ -208,7 +208,7 @@ RSpec.describe MenuItemsController, type: :controller do
                 delete :destroy, params:{restaurant_id:'b',id:'a'}
             end
             it "should contain flash" do
-                expect(flash[:notice]).to eq("Not found!..")
+                expect(flash[:notice]).to eq("No restaurant is available with given id")
             end
         end
     end

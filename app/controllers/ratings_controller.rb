@@ -1,6 +1,6 @@
 class RatingsController < ApplicationController
 
-    before_action :is_reservation_user , only: [:create,:new]
+    before_action :is_reservation_user 
     
     def new
         @restaurant = Restaurant.find(params[:id])

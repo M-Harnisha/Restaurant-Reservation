@@ -159,7 +159,7 @@ RSpec.describe TableBookedsController, type: :controller do
            post :confrim , params: {id:"4",type:"table"}
         end
         it "should contain flash" do
-          expect(flash[:notice]).to eq("Invalid restaurant")
+          expect(flash[:notice]).to eq("No restaurant is available with given id")
         end
     end
   end
@@ -244,7 +244,7 @@ describe "get /table_bookeds#edit" do
         get :edit, params:{id:restaurant.id,reservation_id:'a'}
     end
     it "should contain flash" do
-        expect(flash[:notice]).to eq("Not found!..")
+        expect(flash[:notice]).to eq("No reservation is available with given id")
     end
   end
   end
@@ -348,7 +348,7 @@ describe "get /table_bookeds#edit" do
             delete :destroy_each , params:{id:'b',reservation_id:'a',table_id:table.id}
         end
         it "should contain flash" do
-            expect(flash[:notice]).to eq("Not found!..")
+            expect(flash[:notice]).to eq("No restaurant is available with given id")
         end
     end
   end
@@ -400,7 +400,7 @@ describe "get /table_bookeds#edit" do
             delete :destroy , params:{id:'b',reservation_id:'a',table_id:table.id}
         end
         it "should contain flash" do
-            expect(flash[:notice]).to eq("Not found!..")
+            expect(flash[:notice]).to eq("No restaurant is available with given id")
         end
     end
   end

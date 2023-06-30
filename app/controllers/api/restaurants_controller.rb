@@ -75,8 +75,8 @@ class Api::RestaurantsController < Api::ApiController
 
   def restaurant_city
     city = params[:city].downcase
-    restaurants  = Restaurant.find_by(city: city)
-    if restaurants 
+    restaurants  = Restaurant.where("city LIKE ?", "%#{city}%")
+    if restaurants.length!=0
       render json: restaurants , status: :ok
     else
       render json: {message: "No restaurant is available with city as #{city}"} , status: :not_found
@@ -99,11 +99,15 @@ class Api::RestaurantsController < Api::ApiController
   
   def restaurant_users
     restaurant = Restaurant.find_by(id: params[:id])
-    restaurant_users = restaurant.users
-    if restaurant_users
-      render json: restaurant_users , status: :ok
+    if restaurant
+      restaurant_users = restaurant.users
+      if restaurant_users.length!=0
+        render json: restaurant_users , status: :ok
+      else
+        render json: {message:"No users available"} , status: :not_found
+      end
     else
-      render json: {message:"No users available"} , status: :not_found
+      render json: {message:"no restaurant is found with given id"} , status: :not_found
     end
   end
 

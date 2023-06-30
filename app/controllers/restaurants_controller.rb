@@ -1,14 +1,37 @@
 class RestaurantsController < ApplicationController
   before_action :is_owner ,only: [ :new,:create ]
-  before_action :is_restaurant , only: [:show,:edit,:update]
+  before_action :is_restaurant , only: [:show,:edit,:update,:destroy]
   before_action :is_restaurant_owner , only: [:edit,:update,:destroy]
  
 
   def index
+
+    @restaurants = Restaurant.all
+    p params
+
+    if params[:name] and params[:name].length!=0
+      name = params[:name].downcase
+      @restaurants = Restaurant.where("name LIKE?","%#{name}%")
+    end
+
+    if params[:city] and params[:city].length!=0
+      city = params[:city].downcase
+      @restaurants = @restaurants.where("city LIKE?","%#{city}%")
+    end
+
+    if params[:menu] and params[:menu].length!=0
+      menu = params[:menu].downcase
+    
+      @restaurants = @restaurants.where(
+        id: Restaurant.joins(:menu_items)
+                      .where("menu_items.name LIKE ?", "%#{menu}%")
+                      .select(:id)
+      )
+       
+    end
+
     if account_signed_in? and current_account.accountable_type=="Owner"
-      @restaurants = Restaurant.where(owner_id:current_account.accountable_id)
-    else 
-      @restaurants = Restaurant.all 
+      @restaurants = @restaurants.where(owner_id:current_account.accountable_id) 
     end
   end
 
@@ -65,6 +88,7 @@ def is_owner
   end
 
 def is_restaurant_owner 
+  @restaurant = Restaurant.find_by(id: params[:id])
   unless account_signed_in? and current_account.accountable_id==@restaurant.owner_id
     flash[:notice] = "Owner permissions only!!"
     if account_signed_in?

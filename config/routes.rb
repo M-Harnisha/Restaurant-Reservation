@@ -30,6 +30,8 @@ delete "restaurant/:id/reservations/:reservation_id/order", to: "orders#destroy"
   get "reservations/show" , to: "table_bookeds#show" , as:"reservation_show"
   delete "restaurant/:id/reservations/:reservation_id", to: "table_bookeds#destroy" , as:"reservation_table_delete"
   delete "restaurant/:id/reservations/:reservation_id/:table_id", to: "table_bookeds#destroy_each" , as:"reservation_table_each_delete"
+  get "restaurant/:id/today" , to: "table_bookeds#today_table" , as:"today_tables"
+  post "restaurant/:id/today_confrim" , to: "table_bookeds#today_table_confrim" , as:"today_tables_confrim"
 
   get "restaurant/:id/reservations/:reservation_id/edit" , to: "table_bookeds#edit" , as:"reservation_table_edit"
   post "restaurant/:id/reservations/:reservation_id/update" , to: "table_bookeds#update" , as:"reservation_table_update"

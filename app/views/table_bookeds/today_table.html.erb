@@ -1,14 +1,11 @@
 <%= stylesheet_link_tag 'table' %>
 <h1>Book Table...</h1>
-<%= link_to "Book today available tables" ,  today_tables_path  ,class:"btn btn-dark"%>
 
 <div class="book_table bg-light text-dark">
 
-        <%= form_tag(reservation_table_confrim_path(id:@restaurant,type:@type), method: "post") do |f|%>
+        <%= form_tag(today_tables_confrim_path ,method: "post") do |f|%>
                 <div class="row row-cols-2">
-                        <% if @tables.length == 0 %>
-                                <h2>OOPS!..No table available</h2>
-                        <% else %>
+                        <% if @tables and @tables.length!=0 %>
                                 <% @tables.each do |table| %>
                                         <div class="col">
                                         <p><%= check_box_tag table.id %>
@@ -17,11 +14,11 @@
                                         <p>Members occupy table : <%= table.member %></p>
                                         </div>
                                 <% end %>
+                        <% else %>
+                                <h2>OOPS!..No table available</h2>
                         <% end %>
                 </div>
                 <hr>
-                <%= label_tag(:date, Date,class:"form-label") %>
-                <%= date_field(:date_id, :date,class:"form-control") %>
                 <%= submit_tag "submit",class:"btn btn-success my-3 btn-sm w-100" %>
                 
         <% end %>

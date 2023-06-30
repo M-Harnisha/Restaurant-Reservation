@@ -1,4 +1,19 @@
 <%= stylesheet_link_tag 'restaurant' %>
+<%=form_with url:root_path, class:"row d-flex flex-column",method: :get do |f|%>
+    <div class="form-group my-3 col-md-3">
+        <%=f.text_field :name ,class:"form-control",placeholder:"Search by name"%>
+    </div>
+    <div class="form-group my-3 col-3">
+        <%=f.text_field :menu ,class:"form-control",placeholder:"Search by Menu"%>
+    </div>
+    <div class="form-group my-3 col-3">
+        <%=f.text_field :city ,class:"form-control",placeholder:"Search by City"%>
+    </div>
+    <div class="col-3 my-3">
+        <%=f.submit "Search",class:"btn btn-primary"%>
+    </div>
+
+<%end%>
 <h1>My Restaurants...</h1>
 
 <div class="row row-cols-1 row-cols-md-3 g-4" >

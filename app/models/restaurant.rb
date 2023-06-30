@@ -10,14 +10,15 @@ class Restaurant < ApplicationRecord
     #validations
 
     validates :name, presence:true , length: { minimum: 3 , maximum: 25}
-    validates :address , length: { minimum: 5 , maximum: 30} 
+    validates :address , presence:true ,length: { minimum: 5 , maximum: 30} 
     validates :city  , presence: true ,  length: { minimum: 4 , maximum: 15} 
     validates :contact , presence:true, length: { minimum: 10 , maximum: 10} , numericality: { only_integer: true, greater_than: 0 }
     
-    before_create :make_city_lower
+    before_create :make_lower
 
-    def make_city_lower
-      self.city.downcase
+    def make_lower
+      self.name.downcase!
+      self.city.downcase!
     end
 
     # scope

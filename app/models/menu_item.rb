@@ -23,4 +23,9 @@ class MenuItem < ApplicationRecord
 
     validates :name , presence:true , length:{ minimum:3 , maximum:15 }
     validates :quantity , :rate , presence:true ,numericality: { only_integer: true, greater_than: 0 }
+    before_create :make_lower
+
+    def make_lower
+      self.name.downcase!
+    end
 end

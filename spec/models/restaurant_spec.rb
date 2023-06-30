@@ -9,8 +9,9 @@ RSpec.describe Restaurant, type: :model do
         before do
           restaurant.validate
         end
+        
         it "should return false" do
-          expect(restaurant.errors).to include(:name)
+          expect(restaurant.errors.full_messages).to include("Name can't be blank")
         end
     end
   
@@ -20,7 +21,7 @@ RSpec.describe Restaurant, type: :model do
          restaurant.validate
        end
        it "should return false" do
-         expect(restaurant.errors).to include(:name)
+         expect(restaurant.errors.full_messages).to include("Name can't be blank")
        end
     end
 
@@ -30,7 +31,7 @@ RSpec.describe Restaurant, type: :model do
           restaurant.validate
         end
         it "should return false" do
-          expect(restaurant.errors).to include(:name)
+          expect(restaurant.errors.full_messages).to include("Name is too short (minimum is 3 characters)")
         end
       end
 
@@ -40,7 +41,7 @@ RSpec.describe Restaurant, type: :model do
             restaurant.validate
           end
           it "should return false" do
-            expect(restaurant.errors).to include(:name)
+            expect(restaurant.errors.full_messages).to include("Name is too long (maximum is 25 characters)")
           end
       end
 
@@ -50,7 +51,7 @@ RSpec.describe Restaurant, type: :model do
             restaurant.validate
           end
           it "should return true" do
-            expect(restaurant.errors).to_not include(:name)
+            expect(restaurant.errors.full_messages).to_not include(:name)
           end
       end
   end
@@ -63,7 +64,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return false" do
-        expect(restaurant.errors).to include(:contact)
+        expect(restaurant.errors.full_messages).to include("Contact can't be blank")
       end
     end
 
@@ -73,7 +74,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return false" do
-        expect(restaurant.errors).to include(:contact)
+        expect(restaurant.errors.full_messages).to include("Contact can't be blank")
       end
     end
 
@@ -83,7 +84,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return false" do
-        expect(restaurant.errors).to include(:contact)
+        expect(restaurant.errors.full_messages).to include("Contact is too short (minimum is 10 characters)")
       end
     end
 
@@ -93,7 +94,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return false" do
-        expect(restaurant.errors).to include(:contact)
+        expect(restaurant.errors.full_messages).to include("Contact is too long (maximum is 10 characters)")
       end
     end
 
@@ -103,7 +104,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return false" do
-        expect(restaurant.errors).to include(:contact)
+        expect(restaurant.errors.full_messages).to include("Contact is not a number")
       end
     end
 
@@ -113,7 +114,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return false" do
-        expect(restaurant.errors).to include(:contact)
+        expect(restaurant.errors.full_messages).to include("Contact must be greater than 0")
       end
     end
 
@@ -123,7 +124,7 @@ RSpec.describe Restaurant, type: :model do
         restaurant.validate
       end
       it "should return true" do
-        expect(restaurant.errors).to_not include(:contact)
+        expect(restaurant.errors.full_messages).to_not include(:contact)
       end
     end
 
@@ -137,7 +138,7 @@ RSpec.describe Restaurant, type: :model do
           restaurant.validate
         end
         it "should return false" do
-          expect(restaurant.errors).to include(:address)
+          expect(restaurant.errors.full_messages).to include("Address can't be blank")
         end
     end
   
@@ -147,7 +148,7 @@ RSpec.describe Restaurant, type: :model do
          restaurant.validate
        end
        it "should return false" do
-         expect(restaurant.errors).to include(:address)
+         expect(restaurant.errors.full_messages).to include("Address can't be blank")
        end
     end
 
@@ -157,7 +158,7 @@ RSpec.describe Restaurant, type: :model do
           restaurant.validate
         end
         it "should return false" do
-          expect(restaurant.errors).to include(:address)
+          expect(restaurant.errors.full_messages).to include("Address is too short (minimum is 5 characters)")
         end
       end
 
@@ -167,7 +168,7 @@ RSpec.describe Restaurant, type: :model do
             restaurant.validate
           end
           it "should return false" do
-            expect(restaurant.errors).to include(:address)
+            expect(restaurant.errors.full_messages).to include("Address is too long (maximum is 30 characters)")
           end
       end
 
@@ -177,7 +178,7 @@ RSpec.describe Restaurant, type: :model do
             restaurant.validate
           end
           it "should return true" do
-            expect(restaurant.errors).to_not include(:address)
+            expect(restaurant.errors.full_messages).to_not include(:address)
           end
       end
   end
@@ -191,7 +192,7 @@ RSpec.describe Restaurant, type: :model do
           restaurant.validate
         end
         it "should return false" do
-          expect(restaurant.errors).to include(:city)
+          expect(restaurant.errors.full_messages).to include("City can't be blank")
         end
     end
   
@@ -201,7 +202,7 @@ RSpec.describe Restaurant, type: :model do
          restaurant.validate
        end
        it "should return false" do
-         expect(restaurant.errors).to include(:city)
+         expect(restaurant.errors.full_messages).to include("City can't be blank")
        end
     end
 
@@ -211,7 +212,7 @@ RSpec.describe Restaurant, type: :model do
           restaurant.validate
         end
         it "should return false" do
-          expect(restaurant.errors).to include(:city)
+          expect(restaurant.errors.full_messages).to include("City is too short (minimum is 4 characters)")
         end
       end
 
@@ -221,7 +222,7 @@ RSpec.describe Restaurant, type: :model do
             restaurant.validate
           end
           it "should return false" do
-            expect(restaurant.errors).to include(:city)
+            expect(restaurant.errors.full_messages).to include("City is too long (maximum is 15 characters)")
           end
       end
 
@@ -231,7 +232,7 @@ RSpec.describe Restaurant, type: :model do
             restaurant.validate
           end
           it "should return true" do
-            expect(restaurant.errors).to_not include(:city)
+            expect(restaurant.errors.full_messages).to_not include(:city)
           end
       end
   end

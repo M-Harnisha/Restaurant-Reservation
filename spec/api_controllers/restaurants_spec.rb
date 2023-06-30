@@ -11,7 +11,9 @@ RSpec.describe Api::RestaurantsController , type: :request do
   let(:owner1) {create(:owner)}
   let(:owner1_account) {create(:account,:for_owner,accountable:owner1)}
 
-  let!(:restaurant) {create(:restaurant,owner:owner)}
+  let!(:restaurant) {create(:restaurant,owner:owner,city:"salem")}
+  let!(:reservation) {create(:reservation,restaurant:restaurant,user:user)}
+
   
   let(:user_token) {create(:doorkeeper_access_token,resource_owner_id:user_account.id)}
   let(:owner_token) {create(:doorkeeper_access_token,resource_owner_id:owner_account.id)}
@@ -266,6 +268,179 @@ RSpec.describe Api::RestaurantsController , type: :request do
     end
 
   end
+
+
+  describe "get city" do
+
+    context "when there is no access token" do
+      before do
+        get "/api/restaurant/sa",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when the user is user" do
+      before do
+        get "/api/restaurant/sa",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+ 
+    context "when the user is owner" do
+      before do
+        get "/api/restaurant/sa",params:{access_token:owner_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when no restuarant is found" do
+      before do
+        get "/api/restaurant/new",params:{access_token:owner_token.token}
+      end
+      it "should have http status 404" do
+        expect(response).to have_http_status(404)
+      end
+    end
+  end
+
+  describe "get highest_reservation" do
+
+    context "when there is no access token" do
+      before do
+        get "/api/highest_reservation",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when the user is user" do
+      before do
+        get "/api/highest_reservation",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+ 
+    context "when the user is owner" do
+      before do
+        get "/api/highest_reservation",params:{access_token:owner_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when no restuarant is found" do
+      before do
+        reservation.destroy
+        get "/api/highest_reservation",params:{access_token:owner_token.token}
+      end
+      it "should have http status 404" do
+        expect(response).to have_http_status(404)
+      end
+    end
+
+  end
+
+  describe "get highest_reservation_user" do
+
+    context "when there is no access token" do
+      before do
+        get "/api/highest_reservation/user",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when the user is user" do
+      before do
+        get "/api/highest_reservation/user",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+ 
+    context "when the user is owner" do
+      before do
+        get "/api/highest_reservation/user",params:{access_token:owner_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when no users is found" do
+      before do
+        user.destroy
+        get "/api/highest_reservation/user",params:{access_token:owner_token.token}
+      end
+      it "should have http status 404" do
+        expect(response).to have_http_status(404)
+      end
+    end
+
+  end
+
+  describe "get restaurant user" do
+
+    context "when there is no access token" do
+      before do 
+        get "/api/restaurant/#{restaurant.id}/users",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when the user is user" do
+      before do
+        get "/api/restaurant/#{restaurant.id}/users",params:{access_token:user_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+ 
+    context "when the user is owner" do
+      before do
+        get "/api/restaurant/#{restaurant.id}/users",params:{access_token:owner_token.token}
+      end
+      it "should have http status 200" do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "when restaurant id is wrong" do
+      before do
+        get "/api/restaurant/a/users",params:{access_token:owner_token.token}
+      end
+      it "should have http status 404" do
+        expect(response).to have_http_status(404)
+      end
+    end
+
+    context "when no users is found" do
+      before do
+        User.destroy_all
+        get "/api/restaurant/#{restaurant.id}/users",params:{access_token:owner_token.token}
+      end
+      it "should have http status 404" do
+        expect(response).to have_http_status(404)
+      end
+    end
+
+  end
+
 
   
 end

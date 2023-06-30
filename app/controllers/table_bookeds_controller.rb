@@ -3,11 +3,14 @@ class TableBookedsController < ApplicationController
     
     before_action :is_user , only: [:table,:confrim,:edit,:update,:destroy,:destroy_each]
 
-    before_action :is_user_table , only: [:edit,:update,:destroy,:destroy_each]
+    before_action :is_restaurant , except: [:show]
+
+    before_action :is_reservation ,  except: [:table, :confrim, :show, :today_table , :today_table_confrim]
+
+    before_action :is_user_table , except: [:table, :confrim, :show , :today_table , :today_table_confrim]
 
 
     def table 
-        @restaurant = Restaurant.find(params[:id])
         @tables = @restaurant.tables
         @type = params[:type]
         unless @type=="table" or @type=="food" or @type=="table_food"
@@ -15,15 +18,34 @@ class TableBookedsController < ApplicationController
         end
     end
 
+    def today_table
+         @tables = Table.left_joins(:reservations)
+                        .where.not(reservations: {date: Date.today })
+                        .or(Table.left_joins(:reservations).where(reservations: { id: nil }))
+                        .where(restaurant_id: @restaurant)
+    end
+
+    def today_table_confrim
+        result = create_reservation(@restaurant,Date.today,params)
+        flag = result[0]
+        @reservation1 = result[1]
+        if flag==0 and @reservation1 
+            @reservation1.destroy
+            redirect_to today_tables_path(id:params[:id]) , notice:"No tables selected!!"
+            return
+        else 
+            redirect_to reservation_show_path
+        end
+    end
+
     def confrim
-        if @restaurant = Restaurant.find_by(id: params[:id])
             @type = params[:type]
             unless @type=="table" or @type=="food" or @type=="table_food"
                 redirect_to root_path , notice:"Invalid type"
                 return
             end
             @date = params.require(:date_id)
-            @tables = @restaurant.tables 
+             
             if @date[:date].length!=0
                 
                 @reservations = Reservation.where(restaurant_id:@restaurant.id)
@@ -47,15 +69,9 @@ class TableBookedsController < ApplicationController
                     end
 
                     if flag==0
-                        @reservation1 = @restaurant.reservations.new(user_id:current_account.accountable_id,date:@date[:date],restaurant_id:@restaurant.id)
-                        @reservation1.save
-                        @tables.each do |table|
-                            tableId = table.id.to_s
-                            if params.has_key?(tableId)
-                                flag=2
-                                @reservation1.tables << table
-                            end    
-                        end
+                        result = create_reservation(@restaurant,@date[:date],params)
+                        flag = result[0]
+                        @reservation1 = result[1]
                     end
                     
                 end
@@ -66,7 +82,7 @@ class TableBookedsController < ApplicationController
                     @reservation1.destroy
                     redirect_to reservation_table_path(id:params[:id]) , notice:"No tables selected!!"
                     return
-                else
+                else 
                     if @type=="table"
                         redirect_to reservation_show_path
                         return
@@ -79,16 +95,12 @@ class TableBookedsController < ApplicationController
                 redirect_to reservation_table_path(id:@restaurant.id,type:@type) , notice: "check whether you have filled all the details.."
                 return
             end
-        else
-            redirect_to root_path , notice: "Invalid restaurant"
-            return
-        end
     end
 
     def show
         if account_signed_in? and current_account.accountable_type=="User"
             user = User.find(current_account.accountable_id)
-            @reservations = user.reservations
+            @restaurants = user.restaurants.uniq
             @latest_order = user.latest_order
         elsif account_signed_in? and current_account.accountable_type=="Owner"
             owner = Owner.find(current_account.accountable_id)
@@ -97,15 +109,11 @@ class TableBookedsController < ApplicationController
     end
 
     def edit 
-        @restaurant = Restaurant.find(params[:id])
-        @reservation = Reservation.find(params[:reservation_id])
         @tables_all = @restaurant.tables
         @tables = @reservation.tables
     end
 
     def update
-        @reservation = Reservation.find(params[:reservation_id])
-        @restaurant = Restaurant.find(params[:id])
         @tables = @restaurant.tables 
         date = @reservation.date
 
@@ -143,7 +151,6 @@ class TableBookedsController < ApplicationController
     end
 
     def destroy_each
-        @reservation = Reservation.find(params[:reservation_id])
         if table = Table.find_by(id: params[:table_id])
             @reservation.tables.delete(table)
             @reservation.save
@@ -158,7 +165,6 @@ class TableBookedsController < ApplicationController
     end
 
     def destroy
-        @reservation = Reservation.find(params[:reservation_id])
         tables = @reservation.tables
         if @reservation.order
             tables.each do |table|
@@ -186,6 +192,7 @@ class TableBookedsController < ApplicationController
     end
 
     def is_user_table
+        @reservation = Reservation.find(params[:reservation_id])
         unless account_signed_in? and current_account.accountable_type=="User" and current_account.accountable_id==@reservation.user_id
             if account_signed_in?
                 flash[:notice] = "only booked user can make changes!"
@@ -203,11 +210,33 @@ class TableBookedsController < ApplicationController
     end
 
     def is_restaurant
-        if @restaurant = Restaurant.find_by(id: params[:restaurant_id])
+        if @restaurant = Restaurant.find_by(id: params[:id])
           @restaurant
         else
           redirect_to root_path , notice:"No restaurant is available with given id"
         end
     end
 
+    def is_reservation
+        if @reservation = Reservation.find_by(id: params[:reservation_id])
+          @reservation
+        else
+          redirect_to root_path , notice:"No reservation is available with given id"
+        end
+    end
+
+    def create_reservation( restaurant, date, params)
+        flag=0
+        tables = restaurant.tables 
+        reservation1 = restaurant.reservations.new(user_id:current_account.accountable_id,date:date,restaurant_id:restaurant.id)
+        reservation1.save
+        tables.each do |table|
+            tableId = table.id.to_s
+            if params.has_key?(tableId)
+                flag=2
+                reservation1.tables << table
+            end    
+        end
+        return [flag, reservation1]
+    end
 end
