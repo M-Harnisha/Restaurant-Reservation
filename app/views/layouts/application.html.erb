@@ -18,10 +18,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@1,300&family=Lato:ital@1&display=swap" rel="stylesheet">
   </head>
-
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="font-family: 'Lato', sans-serif;">
-      <div class="container-fluid">
+      <div class="container-fluid"> 
         <a class="navbar-brand" href="#">Restaurant Reservation</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -38,7 +37,7 @@
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <%= current_account.name %>
               </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <ul class = "dropdown-menu" aria-labelledby="navbarDropdown">
                 <% if false %>
                   <li><%= button_to "Edit profile" ,   edit_account_registration_path  , method: :get, class:"nav-link",style:"border:none; background-color:white; color:black;" %>
                   </li>
@@ -51,6 +50,39 @@
             <% else %>
               <%= link_to "login" , new_account_session_path , class:"nav-link" %>
             <% end %>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              search
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">search by different fields</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                  <%=form_with url:root_path, class:"row",method: :get do |f|%>
+                    <div class="form-group my-3 ">
+
+                        <%=f.text_field :name ,class:"form-control",placeholder:"Enter search word.."%>
+                    </div>
+                    <div class="my-2">
+                      <label>Enter field by which search needs to be applied</label>
+                      <%= f.select(:field,[['Name', 'Name'], ['MenuItem', 'MenuItem'], ['City', 'City'] ],{},{:class=>"form-select"})%>
+                    </div>
+                    <div class="my-3">
+                      <%=f.submit "Search",class:"btn btn-success w-100"%></button>    
+                    </div>
+                
+                <%end%>
+                  </div>
+                   
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

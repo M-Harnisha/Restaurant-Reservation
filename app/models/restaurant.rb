@@ -1,4 +1,5 @@
 class Restaurant < ApplicationRecord
+    paginates_per 3
     has_many :tables , dependent: :destroy
     has_many :menu_items , dependent: :destroy
     has_many :reservations , dependent: :destroy

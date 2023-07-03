@@ -6,28 +6,21 @@ class RestaurantsController < ApplicationController
 
   def index
 
-    @restaurants = Restaurant.all
+    @restaurants = Restaurant.all.page(params[:page])
     p params
 
     if params[:name] and params[:name].length!=0
+      field = params[:field]
       name = params[:name].downcase
-      @restaurants = Restaurant.where("name LIKE?","%#{name}%")
-    end
 
-    if params[:city] and params[:city].length!=0
-      city = params[:city].downcase
-      @restaurants = @restaurants.where("city LIKE?","%#{city}%")
-    end
-
-    if params[:menu] and params[:menu].length!=0
-      menu = params[:menu].downcase
-    
-      @restaurants = @restaurants.where(
-        id: Restaurant.joins(:menu_items)
-                      .where("menu_items.name LIKE ?", "%#{menu}%")
-                      .select(:id)
-      )
-       
+      if field=="Name"
+        @restaurants = Restaurant.where("name LIKE?","%#{name}%")
+      elsif field=="City"
+        @restaurants = Restaurant.where("city LIKE?","%#{city}%")
+      elsif field=="MenuItem"
+        @restaurants = Restaurant.joins(:menu_items).where("menu_items.name LIKE ?", "%#{name}%")
+      end
+        
     end
 
     if account_signed_in? and current_account.accountable_type=="Owner"

@@ -100,11 +100,18 @@ class TableBookedsController < ApplicationController
     def show
         if account_signed_in? and current_account.accountable_type=="User"
             user = User.find(current_account.accountable_id)
-            @restaurants = user.restaurants.uniq
+            @reservations = user.reservations.uniq
             @latest_order = user.latest_order
         elsif account_signed_in? and current_account.accountable_type=="Owner"
             owner = Owner.find(current_account.accountable_id)
-            @restaurants = owner.restaurants.all 
+            restaurants = owner.restaurants.all 
+            @reservations = Array.new
+            restaurants.each do |restaurant|
+                restaurant.reservations.each do |reservation|
+                    @reservations.push(reservation)
+                end
+            end
+            p @reservations[0].restaurant
         end
     end
 

@@ -49,6 +49,7 @@ gem 'byebug'
 
 gem 'activeadmin'
 
+gem 'kaminari'
 
 gem "rails-controller-testing"
 
