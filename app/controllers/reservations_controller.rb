@@ -4,7 +4,7 @@ class ReservationsController < ApplicationController
 
     def index
         value = params.require(:reservation)
-        puts value
+        
         @restaurant = Restaurant.find(params[:id])
         if value=="Table"
             if @restaurant.tables.length==0 

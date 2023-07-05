@@ -1,7 +1,10 @@
 FactoryBot.define do
   factory :restaurant do
-    name{"kfc"}
-    address{"xyz nagar"}
+    sequence :name do |n|
+      "restaurant#{n}"
+    end
+   
+    address{"lkjhg nagar"}
     contact{"9874561239"}
     city{"erode"}
     owner

@@ -19,10 +19,15 @@ class TableBookedsController < ApplicationController
     end
 
     def today_table
-         @tables = Table.left_joins(:reservations)
-                        .where.not(reservations: {date: Date.today })
-                        .or(Table.left_joins(:reservations).where(reservations: { id: nil }))
-                        .where(restaurant_id: @restaurant)
+
+        table = Table.left_joins(:reservations)
+                        .where(reservations: {date: Date.today })
+                        .where(restaurant_id: @restaurant).pluck(:id)
+
+        @tables = Table.where.not(id: table)
+                       .where(restaurant_id: @restaurant)
+        
+        
     end
 
     def today_table_confrim
@@ -111,7 +116,7 @@ class TableBookedsController < ApplicationController
                     @reservations.push(reservation)
                 end
             end
-            p @reservations[0].restaurant
+             
         end
     end
 

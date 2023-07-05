@@ -4,11 +4,20 @@ class MenuItemsController < ApplicationController
     before_action :is_restaurant_owner , only: [:create,:edit,:update,:destroy]
 
     def create 
-        @menu_item = @restaurant.menu_items.create(menu_params)
-        if @menu_item.save
-            redirect_to @restaurant , notice:"New menu item is created"
-        else 
-            redirect_to root_path
+        @menu_item = MenuItem.new(menu_params)
+        existing_menu = @restaurant.menu_items.find_by(name:@menu_item.name , rate:@menu_item.rate)
+        if existing_menu
+            quantity = existing_menu.quantity
+            existing_menu.update(quantity:quantity+@menu_item.quantity)
+            existing_menu.images.attach(params[:menu_item][:images])
+            redirect_to @restaurant , notice:"Menu item has updated.."
+        else
+            @restaurant.menu_items << @menu_item
+            if @menu_item.save
+                redirect_to @restaurant , notice:"New menu item is created"
+            else 
+                redirect_to root_path
+            end
         end
     end 
 

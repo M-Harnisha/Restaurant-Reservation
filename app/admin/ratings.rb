@@ -9,11 +9,11 @@ ActiveAdmin.register Rating do
   #
   # or
   #
-  # permit_params do
-  #   permitted = [:value, :rateable_type, :rateable_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  permit_params do
+    permitted = [:value, :rateable_type, :rateable_id]
+    permitted << :other if params[:action] == 'create' && current_user.admin?
+    permitted
+  end
   index do
     column :id
     column :value

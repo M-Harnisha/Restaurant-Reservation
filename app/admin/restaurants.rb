@@ -14,7 +14,7 @@ ActiveAdmin.register Restaurant do
     permitted << :other if params[:action] == 'create' && current_user.admin?
     permitted
   end
-
+  scope :all
   scope :rating_greater_than_75
   scope :most_reserved
 
@@ -30,9 +30,10 @@ ActiveAdmin.register Restaurant do
 
   filter :tables
   filter :menu_items
-  filter :owner
+  filter :owner , as: :select,collection: proc {Account.pluck(:name,:id)}
   filter :contact
   filter :city
   filter :reservations ,as: :select,collection: proc {Reservation.pluck(:id,:id)}
 
 end
+

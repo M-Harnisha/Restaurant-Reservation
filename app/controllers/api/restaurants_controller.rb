@@ -34,6 +34,7 @@ class Api::RestaurantsController < Api::ApiController
     owner = Owner.find_by(id: current_account.accountable_id)
     if owner 
       restaurant = owner.restaurants.create(restaurant_params)
+      # byebug
       if restaurant.save
         render json: restaurant , status: :created
       else 

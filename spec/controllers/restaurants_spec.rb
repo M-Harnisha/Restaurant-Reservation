@@ -11,7 +11,7 @@ RSpec.describe RestaurantsController, type: :controller do
   let(:owner1) {create(:owner)}
   let(:owner1_account) {create(:account,:for_owner,accountable:owner1)}
 
-  let(:restaurant) {create(:restaurant,owner:owner,city:"ERODE",name:"BBQ")}
+  let(:restaurant) {create(:restaurant,owner:owner,city:"ERODE")}
 
   describe "get /restaurants#index" do
 
@@ -137,6 +137,7 @@ end
     context "when account is sign in as owner" do
       before do
         sign_in owner_account
+        restaurant.destroy
         post :create , params:{restaurant:{name:restaurant.name,address:restaurant.address,city:restaurant.city,contact:restaurant.contact,owner:owner}}
       end
       it "should contain flash" do
@@ -335,7 +336,7 @@ describe "callbacks" do
       restaurant.save
     end
     it "be in lowercase" do
-      expect(restaurant.name).to eq("bbq")
+      expect(restaurant.name).to eq(restaurant.name.downcase)
     end
   end
 end

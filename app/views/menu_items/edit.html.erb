@@ -9,17 +9,17 @@
 
   <div class="mb-3">
     <%= form.label :quantity ,  class:"form-label"%>
-    <%= form.number_field :quantity ,  class:"form-control" , required:true %>
+    <%= form.number_field :quantity ,  class:"form-control" , required:true , min:0%>
   </div>
 
   <div class="mb-3">
     <%= form.label :rate ,  class:"form-label"%>
-    <%= form.number_field :rate ,  class:"form-control" , required:true%>
+    <%= form.number_field :rate ,  class:"form-control" , required:true, min:0%>
   </div>
 
   <div class="mb-3">
   <%= form.label :images ,  class:"form-label"%><br>
-    <%= form.file_field :images, multiple:false,  class:"form-control" %>
+    <%= form.file_field :images, multiple:false, accept: 'image/*', required:true, class:"form-control" %>
   </div>
 
   <div class="mb-3">

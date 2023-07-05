@@ -5,31 +5,62 @@ class RestaurantsController < ApplicationController
  
 
   def index
-
-    @restaurants = Restaurant.all.page(params[:page])
-    p params
-
-    if params[:name] and params[:name].length!=0
-      field = params[:field]
-      name = params[:name].downcase
-
-      if field=="Name"
-        @restaurants = Restaurant.where("name LIKE?","%#{name}%")
-      elsif field=="City"
-        @restaurants = Restaurant.where("city LIKE?","%#{city}%")
-      elsif field=="MenuItem"
-        @restaurants = Restaurant.joins(:menu_items).where("menu_items.name LIKE ?", "%#{name}%")
-      end
-        
-    end
+    @restaurants = Restaurant.all
+    @index = false
 
     if account_signed_in? and current_account.accountable_type=="Owner"
-      @restaurants = @restaurants.where(owner_id:current_account.accountable_id) 
-    end
+      unless params[:name]
+        @restaurants = Restaurant.all.page(params[:page])
+        @index = true
+      else 
+        if params[:name] and params[:name].length!=0
+          field = params[:field]
+          name = params[:name].downcase
+          if field=="Name"
+            @restaurants = Restaurant.where("name LIKE ?", "%#{name}%")
+          elsif field=="City"
+            @restaurants = Restaurant.where("city LIKE ?", "%#{name}%")
+          elsif field=="MenuItem"
+            @restaurants = Restaurant.joins(:menu_items).where("menu_items.name LIKE ?", "%#{name}%")
+          end
+        end
+      end
+      @restaurants = @restaurants.where(owner_id:current_account.accountable_id)
+    else
+      unless params[:name]
+        @restaurants = Restaurant.left_outer_joins(:tables, :menu_items)
+        .where('tables.id IS NOT NULL OR menu_items.id IS NOT NULL')
+        .distinct.page(params[:page])
+        @index = true
+      else 
+        if params[:name] and params[:name].length!=0
+          field = params[:field]
+          name = params[:name].downcase
+          
+          if field=="Name"
+            @restaurants = Restaurant.left_outer_joins(:tables, :menu_items)
+                          .where('tables.id IS NOT NULL OR menu_items.id IS NOT NULL')
+                          .where("restaurants.name LIKE ?", "%#{name}%")
+                          .distinct
+          elsif field=="City"
+            @restaurants = Restaurant.left_outer_joins(:tables, :menu_items)
+                          .where('tables.id IS NOT NULL OR menu_items.id IS NOT NULL')
+                          .where("restaurants.city LIKE ?", "%#{name}%")
+                          .distinct
+          elsif field=="MenuItem"
+            @restaurants = Restaurant.left_outer_joins(:tables, :menu_items)
+                          .where('tables.id IS NOT NULL OR menu_items.id IS NOT NULL')
+                          .where("menu_items.name LIKE ?", "%#{name}%")
+                          .distinct
+          end 
+        end
+      end    
+    end 
   end
 
-  def show
+  def show 
   end
+  # modeling and demodeling , trasormation model ,image procesing
 
   def new 
     @restaurant = Restaurant.new()
@@ -40,7 +71,8 @@ class RestaurantsController < ApplicationController
     @restaurant = @owner.restaurants.create(restaurant_params)
     if @restaurant.save
       redirect_to @restaurant , notice:"Created New Restaurant"
-    else 
+    else
+      flash.now[:alert] = 'Failed to save restaurant'
       render :new, status: :unprocessable_entity
     end
   end

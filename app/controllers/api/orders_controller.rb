@@ -27,7 +27,7 @@ class Api::OrdersController < Api::ApiController
             menus = restaurant.menu_items
             total_rate = 0
             reservationId = params[:reservation_id]
-            puts reservationId
+             
             if reservationId=="nil"
                 reservation = restaurant.reservations.new(user_id:12,date:Date.today)
                 reservation.save
@@ -40,7 +40,7 @@ class Api::OrdersController < Api::ApiController
 
                 if menus
                     menus.each do |menu|
-                        puts menu.id
+                        
                         menuId = menu.id.to_s
                         if params.has_key?(menuId)
                             quantity = params.require(:quantity)

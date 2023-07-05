@@ -49,3 +49,8 @@ h5{
 .show_reservation .card-body div{
     margin-left: 30%;
 }
+
+.today_table{
+    margin-left : 15%;
+    margin-bottom: 3%;
+}

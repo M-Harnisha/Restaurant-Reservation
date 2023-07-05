@@ -28,6 +28,7 @@ RSpec.describe MenuItemsController, type: :controller do
         context "when account is sign in as owner" do
             before do
                 sign_in owner_account
+                menu.destroy
                 post :create , params:{restaurant_id:restaurant.id,menu_item:{name:menu.name,quantity:menu.quantity,rate:menu.rate}}
             end
             it "should contain flash" do

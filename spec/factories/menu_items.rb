@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :menu_item do
-    name{"poori"}
+    sequence :name do |n|
+      "menu#{n}"
+    end
     quantity{10}
     rate{20}
     restaurant

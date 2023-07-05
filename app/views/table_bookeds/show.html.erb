@@ -43,7 +43,8 @@
               <div>
 
                 <% if account_signed_in? and current_account.accountable_type=="Owner" %>
-                <p class="card-text">User name : <%= reservation.user.account.name %> </p>
+                  <p class="card-text">User name : <%= reservation.user.account.name %> </p>
+                  <p class="card-text">Contact no: <%= reservation.user.account.contact %> </p>
                 <% end %>
 
                 <% if reservation.tables.length!=0 %>

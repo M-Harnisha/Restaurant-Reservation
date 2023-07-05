@@ -144,6 +144,7 @@ RSpec.describe Api::RestaurantsController , type: :request do
 
     context "when the user is owner" do
       before do
+        restaurant.destroy
         post "/api/restaurants",params:{access_token:owner_token.token,restaurant:{name:restaurant.name,address:restaurant.address,city:restaurant.city,contact:restaurant.contact,owner:owner}}
       end
       it "should have http status 201" do

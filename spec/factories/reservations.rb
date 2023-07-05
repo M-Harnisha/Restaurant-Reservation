@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :reservation do
-    date{"2023-06-30"}
+    date{"2023-10-02"}
     restaurant
     user
   end
